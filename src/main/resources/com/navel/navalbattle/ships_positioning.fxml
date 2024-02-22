@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.Pane?>
+
+<BorderPane fx:id="borderPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="560.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.navel.navalbattle.ShipsPositioningController">
+   <right>
+      <Pane fx:id="hangarPane" prefHeight="400.0" prefWidth="160.0" style="-fx-background-color: TRANSPARENT;" BorderPane.alignment="CENTER" />
+   </right>
+   <center>
+      <Pane fx:id="fieldPane" prefHeight="400.0" prefWidth="400.0" style="-fx-background-color: BLUE;" BorderPane.alignment="CENTER" />
+   </center>
+</BorderPane>

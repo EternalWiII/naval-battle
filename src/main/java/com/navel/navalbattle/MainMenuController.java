@@ -29,9 +29,10 @@ public class MainMenuController {
     private Parent root;
     @FXML
     protected void onStartGameClick(ActionEvent e) throws IOException {
-        root = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("game.fxml")));
+        root = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("ships_positioning.fxml")));
         stage = (Stage) ((Node) e.getSource()).getScene().getWindow();
         scene = new Scene(root);
+
         stage.setScene(scene);
         stage.show();
 

@@ -25,6 +25,7 @@ public class Main extends Application {
             onExitClick(stage);
             }
         );
+
         scene.setOnKeyPressed(event -> {
             if (event.getCode() == KeyCode.ESCAPE) {
                 Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
