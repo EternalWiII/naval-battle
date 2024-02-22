@@ -18,6 +18,7 @@ public class Main extends Application {
         Scene scene = new Scene(fxmlLoader.load());
         stage.setTitle("Naval battle");
         stage.setScene(scene);
+        //stage.setResizable(false);
         stage.show();
 
         stage.setOnCloseRequest(event -> {
@@ -49,4 +50,6 @@ public class Main extends Application {
     public static void main(String[] args) {
         launch();
     }
+
+
 }
