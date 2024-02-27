@@ -36,6 +36,8 @@ public class ShipsPositioningController {
 
     private int shipStartX = 440;
     private int shipStartY = 0;
+    int[][] isAvailable;
+    Ship[] shipArr;
 
     @FXML
     public void initialize() {
@@ -62,7 +64,7 @@ public class ShipsPositioningController {
 //        }
 
         Rectangle[] recArr = new Rectangle[10];
-        Ship[] shipArr = new Ship[10];
+        shipArr = new Ship[10];
 
         for (int i = 0; i < 10; i++) {
             recArr[i] = new Rectangle();
@@ -75,7 +77,7 @@ public class ShipsPositioningController {
                 case 3, 4, 5 -> curSize = 2;
                 default -> curSize = 1;
             }
-            shipArr[i] = new Ship(squareSize, recArr[i], shipStartX, shipStartY, curSize);
+            shipArr[i] = new Ship(i, squareSize, recArr[i], shipStartX, shipStartY, curSize);
             fieldPane.getChildren().add(recArr[i]);
             shipArr[i].draw();
             shipStartY += 40;
@@ -86,12 +88,17 @@ public class ShipsPositioningController {
             recArr[i].setOnMouseReleased(event -> released(event, shipArr[curShip]));
         }
 
-
-
-
+        isAvailable = new int[10][10];
+        for (int i = 0; i < 10; i++) {
+            for (int j = 0; j < 10; j++) {
+                isAvailable[i][j] = 0;
+            }
+        }
     }
 
     public void pressed(MouseEvent event, Ship s) {
+        s.setHomeX(s.getX());
+        s.setHomeY(s.getY());
     }
 
     public void dragged(MouseEvent event, Ship s) {
@@ -118,9 +125,35 @@ public class ShipsPositioningController {
         if (gridy >= 10) {
             gridy = 9;
         }
-        s.setX( squareSize * gridx);
-        s.setY( squareSize * gridy);
-        s.draw();
+
+        boolean canPlace = true;
+        int xMin, xMax, yMin, yMax;
+        for (int sn = 0; sn < 10 && canPlace; sn++) {
+            if (s.getShipID() != sn ) {
+                xMin = (int)(shipArr[sn].getX()) / 40 - 1;
+                xMax = xMin + shipArr[sn].getShipSize() + 1;
+
+                yMin = (int)(shipArr[sn].getY()) / 40 - 1;
+                yMax = yMin + 2;
+
+                for (int i = gridx; i < gridx + s.getShipSize(); i++) {
+                    if (i >= xMin && i <= xMax && gridy >= yMin && gridy <= yMax) {
+                        canPlace = false;
+                    }
+                }
+            }
+        }
+
+        if (canPlace) {
+            s.setX(squareSize * gridx);
+            s.setY(squareSize * gridy);
+            s.draw();
+        }
+        else {
+            s.setX(s.getHomeX());
+            s.setY(s.getHomeY());
+            s.draw();
+        }
     }
 
 
