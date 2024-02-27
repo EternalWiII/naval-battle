@@ -34,43 +34,60 @@ public class ShipsPositioningController {
     private Rectangle[][] fieldGrid;
     private Rectangle[][] hangarGrid;
 
+    private int shipStartX = 440;
+    private int shipStartY = 0;
+
     @FXML
     public void initialize() {
-        fieldGrid = new Rectangle[fieldSpots][fieldSpots];
-        for (int i = 0; i < fieldSize; i += squareSize) {
-            for (int j = 0; j < fieldSize; j += squareSize) {
-                Rectangle r = new Rectangle(i, j, squareSize, squareSize);
-                fieldGrid[i / squareSize][j / squareSize] = r;
-                r.setFill(Color.TRANSPARENT);
-                r.setStroke(Color.BLACK);
-                fieldPane.getChildren().add(r);
+//        fieldGrid = new Rectangle[fieldSpots][fieldSpots];
+//        for (int i = xStart; i < fieldSize; i += squareSize) {
+//            for (int j = yStart; j < fieldSize; j += squareSize) {
+//                Rectangle r = new Rectangle(i, j, squareSize, squareSize);
+//                fieldGrid[i / squareSize][j / squareSize] = r;
+//                r.setFill(Color.AQUA);
+//                r.setStroke(Color.BLACK);
+//                fieldPane.getChildren().add(r);
+//            }
+//        }
+
+//        hangarGrid = new Rectangle[hangarSpots][fieldSpots];
+//        for (int i = 0; i < hangarSize; i += squareSize) {
+//            for (int j = 0; j < fieldSize; j += squareSize) {
+//                Rectangle r = new Rectangle(i, j, squareSize, squareSize);
+//                hangarGrid[i / squareSize][j / squareSize] = r;
+//                r.setFill(Color.TRANSPARENT);
+//                r.setStroke(Color.BLACK);
+//                hangarPane.getChildren().add(r);
+//            }
+//        }
+
+        Rectangle[] recArr = new Rectangle[10];
+        Ship[] shipArr = new Ship[10];
+
+        for (int i = 0; i < 10; i++) {
+            recArr[i] = new Rectangle();
+            recArr[i].setFill(Color.RED);
+            recArr[i].setStroke(Color.BLACK);
+            int curSize;
+            switch (i) {
+                case 0 -> curSize = 4;
+                case 1, 2 -> curSize = 3;
+                case 3, 4, 5 -> curSize = 2;
+                default -> curSize = 1;
             }
+            shipArr[i] = new Ship(squareSize, recArr[i], shipStartX, shipStartY, curSize);
+            fieldPane.getChildren().add(recArr[i]);
+            shipArr[i].draw();
+            shipStartY += 40;
+
+            int curShip = i;
+            recArr[i].setOnMousePressed(event -> pressed(event, shipArr[curShip]));
+            recArr[i].setOnMouseDragged(event -> dragged(event, shipArr[curShip]));
+            recArr[i].setOnMouseReleased(event -> released(event, shipArr[curShip]));
         }
 
-        hangarGrid = new Rectangle[hangarSpots][fieldSpots];
-        for (int i = 0; i < hangarSize; i += squareSize) {
-            for (int j = 0; j < fieldSize; j += squareSize) {
-                Rectangle r = new Rectangle(i, j, squareSize, squareSize);
-                hangarGrid[i / squareSize][j / squareSize] = r;
-                r.setFill(Color.TRANSPARENT);
-                r.setStroke(Color.BLACK);
-                hangarPane.getChildren().add(r);
-            }
-        }
 
-        Rectangle r = new Rectangle();
-        r.setFill(Color.RED);
-        r.setStroke(Color.BLACK);
-        int x = 0;
-        int y = 0;
-        Ship s = new Ship(squareSize, r, x, y);
-        borderPane.getChildren().add(r);
 
-        s.draw();
-
-        r.setOnMousePressed(event -> pressed(event, s));
-        r.setOnMouseDragged(event -> dragged(event, s));
-        r.setOnMouseReleased(event -> released(event, s));
 
     }
 
@@ -80,18 +97,29 @@ public class ShipsPositioningController {
     public void dragged(MouseEvent event, Ship s) {
         s.setX(s.getX() + event.getX() - 20);
         s.setY(s.getY() + event.getY() - 20);
-        System.out.println(s.getX());
-        System.out.println(s.getY());
         s.draw();
     }
 
     public void released(MouseEvent event, Ship s) {
         int gridx = ((int)s.getX() + 20) / squareSize;
+        if (gridx < 0) {
+            gridx = 0;
+        }
+        if (gridx >= 15) {
+            gridx = 14;
+        }
+        if (gridx == 10) {
+            gridx = 11;
+        }
         int gridy = ((int)s.getY() + 20) / squareSize;
+        if (gridy < 0) {
+            gridy = 0;
+        }
+        if (gridy >= 10) {
+            gridy = 9;
+        }
         s.setX( squareSize * gridx);
         s.setY( squareSize * gridy);
-        System.out.println(squareSize * gridx);
-        System.out.println(squareSize * gridy);
         s.draw();
     }
 

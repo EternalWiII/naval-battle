@@ -25,19 +25,20 @@ public class Ship {
         return y;
     }
 
-    public Ship(int squareSize, Rectangle rec, int x, int y) {
-        this.squareSize = squareSize;
-        this.rec = rec;
-        this.x = x;
-        this.y = y;
-    }
-
     public void setY(double y) {
         this.y = y;
     }
 
+    public Ship(int squareSize, Rectangle rec, int x, int y, int shipSize) {
+        this.squareSize = squareSize;
+        this.rec = rec;
+        this.x = x;
+        this.y = y;
+        this.shipSize = shipSize;
+    }
+
     public void draw() {
-        rec.setWidth(squareSize);
+        rec.setWidth(squareSize * shipSize);
         rec.setHeight(squareSize);
         rec.setTranslateX(x);
         rec.setTranslateY(y);
