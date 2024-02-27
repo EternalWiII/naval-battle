@@ -26,13 +26,13 @@ public class ShipsPositioningController {
     private BorderPane borderPane;
     private Parent root;
 
-    int fieldSize = 400;
-    int hangarSize = 160;
-    int fieldSpots = 10;
-    int hangarSpots = 4;
-    int squareSize = fieldSize / fieldSpots;
-    Rectangle[][] fieldGrid;
-    Rectangle[][] hangarGrid;
+    private int fieldSize = 400;
+    private int hangarSize = 160;
+    private int fieldSpots = 10;
+    private int hangarSpots = 4;
+    private int squareSize = fieldSize / fieldSpots;
+    private Rectangle[][] fieldGrid;
+    private Rectangle[][] hangarGrid;
 
     @FXML
     public void initialize() {
@@ -64,7 +64,7 @@ public class ShipsPositioningController {
         int x = 0;
         int y = 0;
         Ship s = new Ship(squareSize, r, x, y);
-        hangarPane.getChildren().add(r);
+        borderPane.getChildren().add(r);
 
         s.draw();
 
@@ -78,14 +78,16 @@ public class ShipsPositioningController {
     }
 
     public void dragged(MouseEvent event, Ship s) {
-        s.setX(s.getX() + event.getX());
-        s.setY(s.getY() + event.getY());
+        s.setX(s.getX() + event.getX() - 20);
+        s.setY(s.getY() + event.getY() - 20);
+        System.out.println(s.getX());
+        System.out.println(s.getY());
         s.draw();
     }
 
     public void released(MouseEvent event, Ship s) {
-        int gridx = (int)s.getX() / squareSize;
-        int gridy = (int)s.getY() / squareSize;
+        int gridx = ((int)s.getX() + 20) / squareSize;
+        int gridy = ((int)s.getY() + 20) / squareSize;
         s.setX( squareSize * gridx);
         s.setY( squareSize * gridy);
         System.out.println(squareSize * gridx);

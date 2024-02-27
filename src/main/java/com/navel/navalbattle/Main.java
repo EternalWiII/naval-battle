@@ -38,6 +38,10 @@ public class Main extends Application {
         });
     }
 
+    public static void main(String[] args) {
+        launch();
+    }
+
     private void onExitClick(Stage stage) {
 
         Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
@@ -46,10 +50,5 @@ public class Main extends Application {
             stage.close();
         }
     }
-
-    public static void main(String[] args) {
-        launch();
-    }
-
 
 }
