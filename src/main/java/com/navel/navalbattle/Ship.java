@@ -6,6 +6,70 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 
 public class Ship {
+    private int shipID;
+    private int shipSize;
+    private int squareSize;
+    private Rectangle rec;
+    private double x;
+    private double y;
+    private Color color = Color.BLACK;
+    private double homeX;
+    private double homeY;
+    private boolean isVertical = false;
+
+    public boolean isVertical() {
+        return isVertical;
+    }
+
+    public Ship(int shipID, int squareSize, Rectangle rec, int x, int y, int shipSize) {
+        this.squareSize = squareSize;
+        this.rec = rec;
+        this.x = x;
+        this.y = y;
+        this.shipSize = shipSize;
+        this.shipID = shipID;
+    }
+    public void draw() {
+        if (isVertical) {
+            rec.setWidth(squareSize);
+            rec.setHeight(squareSize * shipSize);
+        }
+        else {
+            rec.setWidth(squareSize * shipSize);
+            rec.setHeight(squareSize);
+        }
+        
+        rec.setTranslateX(x);
+        rec.setTranslateY(y);
+    }
+    public void flipIsVertical() {
+        if (isVertical) {
+            isVertical = false;
+        }
+        else {
+            isVertical = true;
+        }
+    }
+
+    public int[] getUsedArea() {
+        int[] area = new int[4];
+        if (isVertical) {
+            area[0] = (int)(x) / 40 - 1;
+            area[1] = area[0] + 2;
+
+            area[2] = (int)(y) - 1;
+            area[3] = area[2] + shipSize + 1;
+        }
+        else {
+            area[0] = (int)(x) / 40 - 1;
+            area[1] = area[0] + shipSize + 1;
+
+            area[2] = (int)(y) / 40 - 1;
+            area[3] = area[2] + 2;
+        }
+        return area;
+    }
+
     public int getShipSize() {
         return shipSize;
     }
@@ -37,18 +101,6 @@ public class Ship {
     public void setColor(Color color) {
         this.color = color;
     }
-
-    private int shipID;
-
-    private int shipSize;
-    private int squareSize;
-    private Rectangle rec;
-    private double x;
-    private double y;
-    private Color color = Color.BLACK;
-    private double homeX;
-    private double homeY;
-    private boolean isVertical = false;
 
     public double getX() {
         return x;
@@ -88,21 +140,5 @@ public class Ship {
 
     public void setY(double y) {
         this.y = y;
-    }
-
-    public Ship(int shipID, int squareSize, Rectangle rec, int x, int y, int shipSize) {
-        this.squareSize = squareSize;
-        this.rec = rec;
-        this.x = x;
-        this.y = y;
-        this.shipSize = shipSize;
-        this.shipID = shipID;
-    }
-
-    public void draw() {
-        rec.setWidth(squareSize * shipSize);
-        rec.setHeight(squareSize);
-        rec.setTranslateX(x);
-        rec.setTranslateY(y);
     }
 }

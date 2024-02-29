@@ -30,7 +30,10 @@ public class MainMenuController {
     private Parent root;
     @FXML
     protected void onStartGameClick(ActionEvent e) throws IOException {
-        root = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("ships_positioning.fxml")));
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("ships_positioning.fxml"));
+        Parent root = loader.load();
+        ShipsPositioningController controller = loader.getController();
+
         stage = (Stage) ((Node) e.getSource()).getScene().getWindow();
         scene = new Scene(root);
 
@@ -50,6 +53,9 @@ public class MainMenuController {
                         throw new RuntimeException(ex);
                     }
                 }
+            }
+            if (event.getCode() == KeyCode.R) {
+                controller.setRPressed();
             }
         });
     }
