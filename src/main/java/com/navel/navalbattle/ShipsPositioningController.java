@@ -57,6 +57,7 @@ public class ShipsPositioningController {
         shipArr = new Ship[10];
 
         for (int i = 0; i < 10; i++) {
+
             recArr[i] = new Rectangle();
             recArr[i].setFill(Color.RED);
             recArr[i].setStroke(Color.BLACK);
@@ -69,6 +70,9 @@ public class ShipsPositioningController {
             }
             shipArr[i] = new Ship(i, squareSize, recArr[i], shipStartX, shipStartY, curSize);
             fieldPane.getChildren().add(recArr[i]);
+            if (i==0) {
+                shipArr[i].setVertical(false);
+            }
             shipArr[i].draw();
             shipStartY += 40;
 
@@ -94,6 +98,9 @@ public class ShipsPositioningController {
     }
 
     public void dragged(MouseEvent event, Ship s) {
+        System.out.println("DRAGGED");
+        System.out.println(s.getX());
+        System.out.println(s.getY());
         isDragged = true;
         if (s.isVertical()) {
             s.setX(s.getX() + event.getX() - 20);
@@ -103,9 +110,6 @@ public class ShipsPositioningController {
             s.setX(s.getX() + event.getX() - 20);
             s.setY(s.getY() + event.getY() - 20);
         }
-
-
-
         s.draw();
     }
 
@@ -125,7 +129,12 @@ public class ShipsPositioningController {
             if (gridx == 10) {
                 gridx = 11;
             }
-            gridy = ((int)s.getY() - 40) / squareSize;
+            if (s.getShipSize() % 2 == 0) {
+                gridy = ((int)s.getY() + 40) / squareSize;
+            }
+            else {
+                gridy = ((int)s.getY() + 20) / squareSize;
+            }
             if (gridy < 0) {
                 gridy = 0;
             }
@@ -152,7 +161,9 @@ public class ShipsPositioningController {
                 gridy = 9;
             }
         }
-
+        System.out.println("GRIDX/GRIDY");
+        System.out.println(gridx);
+        System.out.println(gridy);
 
         boolean canPlace = true;
         int[] usedArea = new int[4];
@@ -182,7 +193,6 @@ public class ShipsPositioningController {
     public void setRPressed() {
         if(isDragged) {
             draggedShip.flipIsVertical();
-            draggedShip.draw();
         }
     }
 

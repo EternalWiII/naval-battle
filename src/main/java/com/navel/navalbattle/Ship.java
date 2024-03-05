@@ -16,6 +16,7 @@ public class Ship {
     private double homeX;
     private double homeY;
     private boolean isVertical = false;
+    private boolean firstDrag = true;
 
     public boolean isVertical() {
         return isVertical;
@@ -29,26 +30,57 @@ public class Ship {
         this.shipSize = shipSize;
         this.shipID = shipID;
     }
+
+    public void setVertical(boolean vertical) {
+        isVertical = vertical;
+    }
+
     public void draw() {
         if (isVertical) {
             rec.setWidth(squareSize);
             rec.setHeight(squareSize * shipSize);
+            rec.setTranslateX(x);
+            rec.setTranslateY(y);
         }
         else {
             rec.setWidth(squareSize * shipSize);
             rec.setHeight(squareSize);
+            rec.setTranslateX(x);
+            rec.setTranslateY(y);
         }
-        
-        rec.setTranslateX(x);
-        rec.setTranslateY(y);
+    }
+    public void draw(double drawX, double drawY) {
+        if (isVertical) {
+            rec.setRotate(rec.getRotate() - 90);
+//            rec.setWidth(squareSize);
+//            rec.setHeight(squareSize * shipSize);
+//            rec.setTranslateX(drawX);
+//            rec.setTranslateY(drawY);
+        }
+        else {
+            rec.setRotate(rec.getRotate() + 90);
+//            rec.setWidth(squareSize * shipSize);
+//            rec.setHeight(squareSize);
+//            rec.setTranslateX(drawX);
+//            rec.setTranslateY(drawY);
+        }
     }
     public void flipIsVertical() {
+        System.out.println("FLIP");
         if (isVertical) {
             isVertical = false;
+            //y -= squareSize * ((float)(shipSize) / 2) - 20;
+            //draw(x, y - squareSize * ((float)(shipSize) / 2) - 20);
+            draw();
         }
         else {
             isVertical = true;
+            firstDrag = true;
+            //y += squareSize * ((float)(shipSize) / 2) - 20;
+            draw(x, y + squareSize * ((float)(shipSize) / 2) - 20);
         }
+//        System.out.println(x);
+//        System.out.println(y);
     }
 
     public int[] getUsedArea() {
