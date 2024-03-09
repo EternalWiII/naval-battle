@@ -1,5 +1,6 @@
 package com.navel.navalbattle;
 
+import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -94,21 +95,30 @@ public class ShipsPositioningController {
     public void pressed(MouseEvent event, Ship s) {
         s.setHomeX(s.getX());
         s.setHomeY(s.getY());
+        s.setHomeIsVertical(s.isVertical());
         draggedShip = s;
     }
-
     public void dragged(MouseEvent event, Ship s) {
-        System.out.println("DRAGGED");
-        System.out.println(s.getX());
-        System.out.println(s.getY());
         isDragged = true;
         if (s.isVertical()) {
-            s.setX(s.getX() + event.getX() - 20);
-            s.setY(s.getY() + event.getY() - 20);
+            System.out.println("MOUSE");
+            System.out.println(event.getSceneX());
+            System.out.println(event.getSceneY());
+            s.setX((event.getSceneX()) - (double)(squareSize * s.getShipSize()) / 2 - 20);
+            s.setY((event.getSceneY()) - (double)(squareSize) / 2 - 70);
+            System.out.println("XY");
+            System.out.println(s.getX());
+            System.out.println(s.getY());
         }
         else {
-            s.setX(s.getX() + event.getX() - 20);
-            s.setY(s.getY() + event.getY() - 20);
+            System.out.println("MOUSE");
+            System.out.println(event.getSceneX());
+            System.out.println(event.getSceneY());
+            s.setX((event.getSceneX()) - (double)(squareSize * s.getShipSize()) / 2 - 20);
+            s.setY((event.getSceneY()) - (double)(squareSize) / 2 - 70);
+            System.out.println("XY");
+            System.out.println(s.getX());
+            System.out.println(s.getY());
         }
         s.draw();
     }
@@ -119,7 +129,7 @@ public class ShipsPositioningController {
         isDragged = false;
         int gridx, gridy;
         if (s.isVertical()) {
-            gridx = ((int)s.getX() + 20) / squareSize;
+            gridx = ((int)s.getX() + (int)s.getOffset() + 20) / squareSize;
             if (gridx < 0) {
                 gridx = 0;
             }
@@ -129,17 +139,22 @@ public class ShipsPositioningController {
             if (gridx == 10) {
                 gridx = 11;
             }
-            if (s.getShipSize() % 2 == 0) {
-                gridy = ((int)s.getY() + 40) / squareSize;
-            }
-            else {
-                gridy = ((int)s.getY() + 20) / squareSize;
-            }
+
+//            if (s.getShipSize() % 2 == 0) {
+//                gridy = ((int)s.getY() + 40) / squareSize;
+//            }
+//            else {
+//                gridy = ((int)s.getY() + 20) / squareSize;
+//            }
+            gridy = ((int)s.getY() - (int)s.getOffset() + 20) / squareSize;
             if (gridy < 0) {
                 gridy = 0;
             }
             if (gridy >= 10) {
                 gridy = 9;
+            }
+            if ( gridy + s.getShipSize() >= 10) {
+                gridy = 10 - s.getShipSize();
             }
         }
         else {
@@ -152,6 +167,9 @@ public class ShipsPositioningController {
             }
             if (gridx == 10) {
                 gridx = 11;
+            }
+            if ( gridx + s.getShipSize() >= 10 && gridx < 11) {
+                gridx = 10 - s.getShipSize();
             }
             gridy = ((int)s.getY() + 20) / squareSize;
             if (gridy < 0) {
@@ -170,23 +188,74 @@ public class ShipsPositioningController {
         for (int sn = 0; sn < 10 && canPlace; sn++) {
             if (s.getShipID() != sn ) {
                 usedArea = shipArr[sn].getUsedArea();
-                for (int i = gridx; i < gridx + s.getShipSize(); i++) { //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-                    if (i >= usedArea[0] && i <= usedArea[1] && gridy >= usedArea[2] && gridy <= usedArea[3]) {
-                        canPlace = false;
+                if (s.isVertical()) {
+                    for (int i = gridy; i < gridy + s.getShipSize(); i++) {
+                        if (gridx >= usedArea[0] && gridx <= usedArea[1] && i >= usedArea[2] && i <= usedArea[3]) {
+                            canPlace = false;
+                        }
+                    }
+                }
+                else {
+                    for (int i = gridx; i < gridx + s.getShipSize(); i++) {
+                        if (i >= usedArea[0] && i <= usedArea[1] && gridy >= usedArea[2] && gridy <= usedArea[3]) {
+                            canPlace = false;
+                        }
                     }
                 }
             }
         }
 
         if (canPlace) {
-            s.setX(squareSize * gridx);
-            s.setY(squareSize * gridy);
+            if (s.isVertical()) {
+                s.setX(squareSize * gridx - s.getOffset());
+                s.setY(squareSize * gridy + s.getOffset());
+            }
+            else {
+                s.setX(squareSize * gridx);
+                s.setY(squareSize * gridy);
+            }
             s.draw();
         }
         else {
             s.setX(s.getHomeX());
             s.setY(s.getHomeY());
+            if (s.isVertical() != s.isHomeIsVertical()) {
+                s.flipIsVertical();
+            }
             s.draw();
+        }
+    }
+    @FXML
+    protected void onStartClick(ActionEvent e) throws IOException {
+        boolean readyToGo = true;
+        for (int i = 0; i < 10; i++) {
+            if (shipArr[i].isVertical()) {
+                if (shipArr[i].getX() + shipArr[i].getOffset() >= 400) {
+                    readyToGo = false;
+                }
+            }
+            else {
+                if (shipArr[i].getX() >= 400) {
+                    readyToGo = false;
+                }
+            }
+        }
+        if (readyToGo) {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("game.fxml"));
+            Parent root = loader.load();
+            GameController controller = loader.getController();
+            controller.setShipArr(shipArr);
+            controller.drawPlayerShips();
+
+            stage = (Stage) ((Node) e.getSource()).getScene().getWindow();
+            Scene scene = new Scene(root);
+
+            stage.setScene(scene);
+            stage.show();
+        }
+        else {
+            Alert alert = new Alert(Alert.AlertType.WARNING);
+            alert.showAndWait();
         }
     }
 

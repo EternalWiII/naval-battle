@@ -15,11 +15,25 @@ public class Ship {
     private Color color = Color.BLACK;
     private double homeX;
     private double homeY;
+    private boolean homeIsVertical;
     private boolean isVertical = false;
     private boolean firstDrag = true;
+    private double offset = 0;
 
     public boolean isVertical() {
         return isVertical;
+    }
+
+    public boolean isHomeIsVertical() {
+        return homeIsVertical;
+    }
+
+    public void setHomeIsVertical(boolean homeIsVertical) {
+        this.homeIsVertical = homeIsVertical;
+    }
+
+    public double getOffset() {
+        return offset;
     }
 
     public Ship(int shipID, int squareSize, Rectangle rec, int x, int y, int shipSize) {
@@ -29,6 +43,13 @@ public class Ship {
         this.y = y;
         this.shipSize = shipSize;
         this.shipID = shipID;
+        rec.setWidth(squareSize * shipSize);
+        rec.setHeight(squareSize);
+        switch (shipSize) {
+            case 2 -> offset = squareSize / 2;
+            case 3 -> offset = squareSize;
+            case 4 -> offset = (squareSize * 3) / 2;
+        }
     }
 
     public void setVertical(boolean vertical) {
@@ -36,60 +57,34 @@ public class Ship {
     }
 
     public void draw() {
-        if (isVertical) {
-            rec.setWidth(squareSize);
-            rec.setHeight(squareSize * shipSize);
-            rec.setTranslateX(x);
-            rec.setTranslateY(y);
-        }
-        else {
-            rec.setWidth(squareSize * shipSize);
-            rec.setHeight(squareSize);
-            rec.setTranslateX(x);
-            rec.setTranslateY(y);
-        }
-    }
-    public void draw(double drawX, double drawY) {
-        if (isVertical) {
-            rec.setRotate(rec.getRotate() - 90);
-//            rec.setWidth(squareSize);
-//            rec.setHeight(squareSize * shipSize);
-//            rec.setTranslateX(drawX);
-//            rec.setTranslateY(drawY);
-        }
-        else {
-            rec.setRotate(rec.getRotate() + 90);
-//            rec.setWidth(squareSize * shipSize);
-//            rec.setHeight(squareSize);
-//            rec.setTranslateX(drawX);
-//            rec.setTranslateY(drawY);
-        }
+        rec.setWidth(squareSize * shipSize);
+        rec.setHeight(squareSize);
+        rec.setTranslateX(x);
+        rec.setTranslateY(y);
     }
     public void flipIsVertical() {
-        System.out.println("FLIP");
         if (isVertical) {
             isVertical = false;
-            //y -= squareSize * ((float)(shipSize) / 2) - 20;
-            //draw(x, y - squareSize * ((float)(shipSize) / 2) - 20);
+//            rec.setHeight(squareSize);
+//            rec.setWidth(squareSize * shipSize);
+            rec.setRotate(0);
             draw();
         }
         else {
             isVertical = true;
-            firstDrag = true;
-            //y += squareSize * ((float)(shipSize) / 2) - 20;
-            draw(x, y + squareSize * ((float)(shipSize) / 2) - 20);
+//            rec.setHeight(squareSize * shipSize);
+//            rec.setWidth(squareSize);
+            rec.setRotate(90);
+            draw();
         }
-//        System.out.println(x);
-//        System.out.println(y);
     }
-
     public int[] getUsedArea() {
         int[] area = new int[4];
         if (isVertical) {
-            area[0] = (int)(x) / 40 - 1;
+            area[0] = ((int)(x) + (int)offset) / squareSize - 1;
             area[1] = area[0] + 2;
 
-            area[2] = (int)(y) - 1;
+            area[2] = ((int)(y) - (int)offset) / squareSize - 1;
             area[3] = area[2] + shipSize + 1;
         }
         else {

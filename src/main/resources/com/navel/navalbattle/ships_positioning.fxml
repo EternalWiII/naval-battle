@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.scene.control.Button?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.ColumnConstraints?>
 <?import javafx.scene.layout.GridPane?>
@@ -11,7 +12,10 @@
       <Pane prefHeight="50.0" prefWidth="560.0" style="-fx-background-color: BROWN;" BorderPane.alignment="CENTER" />
    </top>
    <bottom>
-      <Pane prefHeight="50.0" prefWidth="560.0" style="-fx-background-color: YELLOW;" BorderPane.alignment="CENTER" />
+      <Pane prefHeight="50.0" prefWidth="560.0" style="-fx-background-color: YELLOW;" BorderPane.alignment="CENTER">
+         <children>
+            <Button fx:id="btnStart" layoutX="466.0" layoutY="13.0" mnemonicParsing="false" onAction="#onStartClick" prefHeight="25.0" prefWidth="160.0" text="Start" />
+         </children></Pane>
    </bottom>
    <right>
       <Pane prefHeight="400.0" prefWidth="200.0" style="-fx-background-color: LightSkyBlue;" BorderPane.alignment="CENTER">
