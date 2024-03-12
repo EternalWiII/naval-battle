@@ -15,6 +15,8 @@
       <Pane prefHeight="50.0" prefWidth="560.0" style="-fx-background-color: YELLOW;" BorderPane.alignment="CENTER">
          <children>
             <Button fx:id="btnStart" layoutX="466.0" layoutY="13.0" mnemonicParsing="false" onAction="#onStartClick" prefHeight="25.0" prefWidth="160.0" text="Start" />
+            <Button fx:id="btnAutoplace" layoutX="14.0" layoutY="13.0" mnemonicParsing="false" onAction="#onAutoplaceClick" prefHeight="25.0" prefWidth="160.0" text="Autoplace" />
+            <Button fx:id="btnClearField" layoutX="240.0" layoutY="13.0" mnemonicParsing="false" onAction="#onClearFieldClick" prefHeight="25.0" prefWidth="160.0" text="Clear field" />
          </children></Pane>
    </bottom>
    <right>
