@@ -39,7 +39,7 @@
    </left>
    <right>
        <Pane prefHeight="440.0" prefWidth="440.0" style="-fx-background-color: LightSkyBlue;" BorderPane.alignment="CENTER">
-           <GridPane gridLinesVisible="true" layoutX="20.0" layoutY="20.0" prefHeight="400.0" prefWidth="400.0">
+           <GridPane fx:id="enemyFieldPane" gridLinesVisible="true" layoutX="20.0" layoutY="20.0" prefHeight="400.0" prefWidth="400.0">
               <columnConstraints>
                   <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
                   <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />

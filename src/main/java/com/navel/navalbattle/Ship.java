@@ -18,6 +18,7 @@ public class Ship {
     private boolean homeIsVertical;
     private boolean isVertical = false;
     private double offset = 0;
+    private int hp;
 
     public Ship(int shipID, int squareSize, Rectangle rec, int x, int y, int shipSize) {
         this.squareSize = squareSize;
@@ -25,6 +26,7 @@ public class Ship {
         this.x = x;
         this.y = y;
         this.shipSize = shipSize;
+        hp = shipSize;
         this.shipID = shipID;
         switch (shipSize) {
             case 2 -> offset = squareSize / 2;
@@ -89,6 +91,19 @@ public class Ship {
             }
         }
         return area;
+    }
+
+    public boolean getHit() {
+        hp--;
+        if (hp == 0) {
+            return true;
+        }
+        return false;
+    }
+
+    public void becomeDestroyed() {
+        rec.setFill(Color.GRAY);
+        rec.toFront();
     }
 
     public double getHomeX() {

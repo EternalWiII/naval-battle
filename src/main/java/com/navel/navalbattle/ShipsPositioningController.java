@@ -322,10 +322,7 @@ public class ShipsPositioningController {
                         shipArr[i].setX(shipPos.x * squareSize);
                         shipArr[i].setY(shipPos.y * squareSize);
                     }
-                    System.out.print("SHIP " + i + ": ");
-                    System.out.print(shipArr[i].getX());
-                    System.out.print(shipArr[i].getY());
-                    System.out.println();
+
                     shipArr[i].draw();
                     shipNotPlaced = false;
                 }
