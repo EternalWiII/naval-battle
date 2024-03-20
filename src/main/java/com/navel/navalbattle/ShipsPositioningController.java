@@ -1,5 +1,7 @@
 package com.navel.navalbattle;
 
+import com.navel.navalbattle.ships.*;
+import com.navel.navalbattle.records.GridPosition;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
@@ -12,81 +14,53 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
-import javafx.scene.shape.Rectangle;
 import javafx.stage.Stage;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 
 import java.io.IOException;
-import java.util.Random;
 
-public class ShipsPositioningController {
+public class ShipsPositioningController extends Controller implements GridCalculations {
     @FXML
     private Stage stage;
     @FXML
     private Pane fieldPane;
     @FXML
-    private Pane hangarPane;
-    @FXML
     private BorderPane borderPane;
-    private int fieldSize = 400;
-    private int fieldSpots = 10;
-    private int squareSize = fieldSize / fieldSpots;
-    private int upOffset = 70;
-
-    private int shipStartX = 440;
+    private int shipStartX = fieldSize + squareSize;
     private int shipStartY = 0;
-    int[][] isAvailable;
     Ship[] shipArr;
-    Rectangle[] recArr;
     boolean isDragged = false;
     private Ship draggedShip;
-    private record gridPosition(int x, int y) {}
+
+    public ShipsPositioningController() {
+        super();
+    }
 
     @FXML
     public void initialize() {
-        recArr = new Rectangle[10];
         shipArr = new Ship[10];
-        createShips();
+
+        createShips(shipArr, fieldPane, squareSize, shipStartX, shipStartY);
+        addPositioningEvents(shipArr);
     }
 
-    public void createShips () {
-        for (int i = 0; i < 10; i++) {
-            recArr[i] = new Rectangle();
-            recArr[i].setFill(Color.RED);
-            recArr[i].setStroke(Color.BLACK);
-
-            int curSize;
-            switch (i) {
-                case 0 -> curSize = 4;
-                case 1, 2 -> curSize = 3;
-                case 3, 4, 5 -> curSize = 2;
-                default -> curSize = 1;
-            }
-
-            shipArr[i] = new Ship(i, squareSize, recArr[i], shipStartX, shipStartY, curSize);
-
-            fieldPane.getChildren().add(recArr[i]);
-
-            shipArr[i].draw();
-
-            shipStartY += 40;
-
-            int curShip = i;
-            recArr[i].setOnMousePressed(event -> recPressed(event, shipArr[curShip]));
-            recArr[i].setOnMouseDragged(event -> recDragged(event, shipArr[curShip]));
-            recArr[i].setOnMouseReleased(event -> recReleased(event, shipArr[curShip]));
+    private void addPositioningEvents(Ship[] shipArr) {
+        for (Ship ship : shipArr) {
+            ship.getRec().setOnMousePressed(event -> recPressed(event, ship));
+            ship.getRec().setOnMouseDragged(event -> recDragged(event, ship));
+            ship.getRec().setOnMouseReleased(event -> recReleased(event, ship));
         }
     }
 
-    public void recPressed(MouseEvent event, Ship s) {
+    private void recPressed(MouseEvent event, Ship s) {
         s.setHomeX(s.getX());
         s.setHomeY(s.getY());
         s.setHomeIsVertical(s.isVertical());
         draggedShip = s;
     }
 
-    public void recDragged(MouseEvent event, Ship s) {
+    private void recDragged(MouseEvent event, Ship s) {
         isDragged = true;
 
         s.getRec().toFront();
@@ -98,13 +72,13 @@ public class ShipsPositioningController {
         s.draw();
     }
 
-    public void recReleased(MouseEvent event, Ship s) {
+    private void recReleased(MouseEvent event, Ship s) {
         isDragged = false;
         s.getRec().setFill(Color.RED);
 
-        gridPosition position = getPosition(s);
+        GridPosition position = getPosition(s, squareSize);
 
-        if (canPlace(s, position, 10)) {
+        if (canPlace(s, shipArr, position)) {
             if (s.isVertical()) {
                 s.setX(squareSize * position.x() - s.getOffset());
                 s.setY(squareSize * position.y() + s.getOffset());
@@ -123,100 +97,6 @@ public class ShipsPositioningController {
             }
             s.draw();
         }
-
-        int[] area = s.getUsedArea();
-        for ( int i = 0; i<4 ; i++) {
-            System.out.println(area[i]);
-        }
-    }
-
-    private boolean canPlace(Ship s, gridPosition position, int shipAmount) {
-        int[] usedArea = new int[4];
-
-        for (int sn = 0; sn < shipAmount; sn++) {
-            if (s.getShipID() != sn ) {
-                usedArea = shipArr[sn].getUsedArea();
-
-                if (s.isVertical()) {
-                    for (int i = position.y(); i < position.y() + s.getShipSize(); i++) {
-                        if (position.x() >= usedArea[0] && position.x() <= usedArea[1] && i >= usedArea[2] && i <= usedArea[3]) {
-                            return false;
-                        }
-                    }
-                }
-                else {
-                    for (int i = position.x(); i < position.x() + s.getShipSize(); i++) {
-                        if (i >= usedArea[0] && i <= usedArea[1] && position.y() >= usedArea[2] && position.y() <= usedArea[3]) {
-                            return false;
-                        }
-                    }
-                }
-            }
-        }
-
-        return true;
-    }
-
-    private gridPosition getPosition(Ship s) {
-        int gridx;
-        int gridy;
-
-        if (s.isVertical()) {
-            gridx = ((int) s.getX() + (int) s.getOffset() + 20) / squareSize;
-
-            if (gridx < 0) {
-                gridx = 0;
-            }
-            if (gridx >= 15) {
-                gridx = 14;
-            }
-            if (gridx == 10) {
-                gridx = 11;
-            }
-
-            gridy = ((int) s.getY() - (int) s.getOffset() + 20) / squareSize;
-
-            if (gridy < 0) {
-                gridy = 0;
-            }
-            if (gridy >= 10) {
-                gridy = 9;
-            }
-            if ( gridy + s.getShipSize() >= 10) {
-                gridy = 10 - s.getShipSize();
-            }
-        }
-        else {
-            gridx = ((int)s.getX() + 20) / squareSize;
-
-            if (gridx < 0) {
-                gridx = 0;
-            }
-            if (gridx >= 15) {
-                gridx = 14;
-            }
-            if (gridx == 10) {
-                gridx = 11;
-            }
-            if ( gridx + s.getShipSize() - 1 >= 10 && gridx < 10) {
-                gridx = 10 - s.getShipSize();
-            }
-            if (gridx + s.getShipSize() >= 15 && gridx >=11) {
-                gridx = 15 - s.getShipSize();
-            }
-
-            gridy = ((int) s.getY() + 20) / squareSize;
-
-            if (gridy < 0) {
-                gridy = 0;
-            }
-            if (gridy >= 10) {
-                gridy = 9;
-            }
-        }
-
-        gridPosition position = new gridPosition(gridx, gridy);
-        return position;
     }
 
     @FXML
@@ -238,8 +118,8 @@ public class ShipsPositioningController {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("game.fxml"));
             Parent root = loader.load();
             GameController controller = loader.getController();
-            controller.setShipArr(shipArr);
-            controller.drawPlayerShips();
+            controller.setPlayerShipArr(shipArr);
+
 
             stage = (Stage) ((Node) e.getSource()).getScene().getWindow();
             Scene scene = new Scene(root);
@@ -288,45 +168,6 @@ public class ShipsPositioningController {
     protected void onAutoplaceClick(ActionEvent e) {
         onClearFieldClick(e);
 
-        int gridx, gridy;
-        boolean shipNotPlaced, randVertical;
-        Random rand = new Random();
-
-        for (int i = 0; i < 10; i++) {
-            shipNotPlaced = true;
-            while (shipNotPlaced) {
-                gridx = rand.nextInt(fieldSpots - 1);
-                gridy = rand.nextInt(fieldSpots - 1);
-                randVertical = rand.nextBoolean();
-
-                if (shipArr[i].isVertical() != randVertical) {
-                    shipArr[i].flipIsVertical();
-                }
-
-                if (shipArr[i].isVertical()) {
-                    shipArr[i].setX(gridx * squareSize - shipArr[i].getOffset());
-                    shipArr[i].setY(gridy * squareSize + shipArr[i].getOffset());
-                }
-                else {
-                    shipArr[i].setX(gridx * squareSize);
-                    shipArr[i].setY(gridy * squareSize);
-                }
-
-                if(canPlace(shipArr[i], getPosition(shipArr[i]), 10)) {
-                    gridPosition shipPos = getPosition(shipArr[i]);
-                    if (shipArr[i].isVertical()) {
-                        shipArr[i].setX(shipPos.x * squareSize - shipArr[i].getOffset());
-                        shipArr[i].setY(shipPos.y * squareSize + shipArr[i].getOffset());
-                    }
-                    else {
-                        shipArr[i].setX(shipPos.x * squareSize);
-                        shipArr[i].setY(shipPos.y * squareSize);
-                    }
-
-                    shipArr[i].draw();
-                    shipNotPlaced = false;
-                }
-            }
-        }
+        autoplaceShips(shipArr, squareSize, fieldSpots);
     }
 }

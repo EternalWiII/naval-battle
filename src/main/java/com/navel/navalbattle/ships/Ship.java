@@ -1,38 +1,34 @@
-package com.navel.navalbattle;
+package com.navel.navalbattle.ships;
 
+import com.navel.navalbattle.records.ShipUsedArea;
 import javafx.scene.paint.Color;
 
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 
 public class Ship {
-    private int shipID;
-    private int shipSize;
-    private int squareSize;
-    private Rectangle rec;
-    private double x;
-    private double y;
-    private Color color = Color.BLACK;
-    private double homeX;
-    private double homeY;
-    private boolean homeIsVertical;
-    private boolean isVertical = false;
-    private double offset = 0;
-    private int hp;
+    protected int shipID;
+    protected int shipSize;
+    protected int squareSize;
+    protected Rectangle rec;
+    protected double x;
+    protected double y;
+    protected boolean isVertical = false;
+    protected Color color = Color.BLACK;
+    protected double homeX;
+    protected double homeY;
+    protected boolean homeIsVertical;
+    protected double offset = 0;
+    protected int hp;
 
-    public Ship(int shipID, int squareSize, Rectangle rec, int x, int y, int shipSize) {
+    public Ship(int shipID, int squareSize, int x, int y) {
         this.squareSize = squareSize;
-        this.rec = rec;
+        rec = new Rectangle();
+        rec.setFill(Color.RED);
+        rec.setStroke(Color.BLACK);
         this.x = x;
         this.y = y;
-        this.shipSize = shipSize;
-        hp = shipSize;
         this.shipID = shipID;
-        switch (shipSize) {
-            case 2 -> offset = squareSize / 2;
-            case 3 -> offset = squareSize;
-            case 4 -> offset = (squareSize * 3) / 2;
-        }
     }
 
     public void draw() {
@@ -55,7 +51,7 @@ public class Ship {
         }
     }
 
-    public int[] getUsedArea() {
+    public ShipUsedArea getUsedArea() {
         int[] area = new int[4];
         if (isVertical) {
             if (((int)(x) + (int)offset ) / squareSize >= 10) {
@@ -90,7 +86,8 @@ public class Ship {
                 area[3] = area[2] + 2;
             }
         }
-        return area;
+
+        return new ShipUsedArea(area[0], area[1], area[2] , area[3]);
     }
 
     public boolean getHit() {

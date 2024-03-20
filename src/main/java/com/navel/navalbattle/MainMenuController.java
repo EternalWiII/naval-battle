@@ -1,5 +1,4 @@
 package com.navel.navalbattle;
-import javafx.scene.input.Dragboard;
 
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -8,29 +7,23 @@ import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
-import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
-import javafx.scene.control.Label;
 import javafx.scene.input.KeyCode;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
 
 import java.io.IOException;
-import java.util.Objects;
 
-public class MainMenuController {
-
-    @FXML
-    private Button exitBtn;
+public class MainMenuController extends Controller {
     @FXML
     private AnchorPane scenePane;
-
     private Stage stage;
     private Scene scene;
-    private Parent root;
+
     @FXML
     protected void onStartGameClick(ActionEvent e) throws IOException {
         FXMLLoader loader = new FXMLLoader(getClass().getResource("ships_positioning.fxml"));
+        System.out.println(loader.getClass());
         Parent root = loader.load();
         ShipsPositioningController controller = loader.getController();
 
