@@ -1,5 +1,6 @@
 package com.navel.navalbattle;
 
+import com.navel.navalbattle.interfaces.WindowsManipulations;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -14,51 +15,43 @@ import javafx.stage.Stage;
 
 import java.io.IOException;
 
-public class MainMenuController extends Controller {
-    @FXML
-    private AnchorPane scenePane;
+public class MainMenuController extends Controller implements WindowsManipulations {
     private Stage stage;
-    private Scene scene;
 
+    /**
+     * Завантажує наступну сцену з розташуванням кораблів та події для неї.
+     * @param e Подія натискання на кнопку.
+     * @throws IOException Помилка при читанні fxml файлу.
+     */
     @FXML
     protected void onStartGameClick(ActionEvent e) throws IOException {
         FXMLLoader loader = new FXMLLoader(getClass().getResource("ships_positioning.fxml"));
-        System.out.println(loader.getClass());
-        Parent root = loader.load();
+        Scene scene = new Scene(loader.load());
         ShipsPositioningController controller = loader.getController();
 
         stage = (Stage) ((Node) e.getSource()).getScene().getWindow();
-        scene = new Scene(root);
 
         stage.setScene(scene);
         stage.show();
 
         scene.setOnKeyPressed(event -> {
             event.consume();
+
             if (event.getCode() == KeyCode.ESCAPE) {
-                Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
-                if (alert.showAndWait().get() == ButtonType.OK) {
-                    FXMLLoader fxmlLoader = new FXMLLoader(Main.class.getResource("main_menu.fxml"));
-                    try {
-                        Scene scene = new Scene(fxmlLoader.load());
-                        stage.setScene(scene);
-                    } catch (IOException ex) {
-                        throw new RuntimeException(ex);
-                    }
-                }
+                processReturnToMain(stage);
             }
+
             if (event.getCode() == KeyCode.R) {
                 controller.setRPressed();
             }
         });
     }
-    @FXML
-    protected void onExitClick(ActionEvent event) {
-        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
 
-        if (alert.showAndWait().get() == ButtonType.OK) {
-            stage = (Stage) scenePane.getScene().getWindow();
-            stage.close();
-        }
+    /**
+     * Оброблює натискання на кнопку виходу.
+     */
+    @FXML
+    protected void onExitClick() {
+        processExit(stage);
     }
 }

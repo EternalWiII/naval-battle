@@ -1,5 +1,6 @@
 package com.navel.navalbattle;
 
+import com.navel.navalbattle.interfaces.WindowsManipulations;
 import javafx.application.Application;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXMLLoader;
@@ -11,43 +12,43 @@ import javafx.stage.Stage;
 
 import java.io.IOException;
 
-public class Main extends Application {
+public class Main extends Application implements WindowsManipulations {
+    /**
+     * Отримує поточний stage та завантажує сцену головного меню.
+     * @param stage Поточний stage.
+     * @throws IOException Помилка при читанні fxml файлу.
+     */
     @Override
     public void start(Stage stage) throws IOException {
-        FXMLLoader fxmlLoader = new FXMLLoader(Main.class.getResource("main_menu.fxml"));
-        Scene scene = new Scene(fxmlLoader.load());
+        FXMLLoader loader = new FXMLLoader(Main.class.getResource("main_menu.fxml"));
+        Scene scene = new Scene(loader.load());
+
         stage.setTitle("Naval battle");
+        stage.setResizable(false);
+
         stage.setScene(scene);
-        //stage.setResizable(false);
         stage.show();
 
         stage.setOnCloseRequest(event -> {
             event.consume();
-            onExitClick(stage);
+            processExit(stage);
             }
         );
 
         scene.setOnKeyPressed(event -> {
+            event.consume();
+
             if (event.getCode() == KeyCode.ESCAPE) {
-                Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
-                if (alert.showAndWait().get() == ButtonType.OK) {
-                    System.out.println("Escape pressed");
-                    stage.close();
-                }
+                processExit(stage);
             }
         });
     }
 
+    /**
+     * Запуск програми.
+     * @param args Додаткові параметри.
+     */
     public static void main(String[] args) {
         launch();
-    }
-
-    private void onExitClick(Stage stage) {
-
-        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
-
-        if (alert.showAndWait().get() == ButtonType.OK) {
-            stage.close();
-        }
     }
 }

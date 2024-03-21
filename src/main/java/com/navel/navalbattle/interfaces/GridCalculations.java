@@ -1,4 +1,4 @@
-package com.navel.navalbattle;
+package com.navel.navalbattle.interfaces;
 
 import com.navel.navalbattle.records.GridPosition;
 import com.navel.navalbattle.records.ShipUsedArea;
@@ -8,6 +8,12 @@ import javafx.scene.layout.Pane;
 import java.util.Random;
 
 public interface GridCalculations {
+    /**
+     * getPosition конвертує координати в номера рядків і стовпців на панелі.
+     * @param s Корабель, координати якого будуть використовуватися.
+     * @param squareSize Довжина однієї сторони клітини в пікселях.
+     * @return об'єкт GridPosition із результатом обрахувань.
+     */
     default GridPosition getPosition(Ship s, int squareSize) {
         int gridx;
         int gridy;
@@ -69,6 +75,13 @@ public interface GridCalculations {
         return new GridPosition(gridx, gridy);
     }
 
+    /**
+     * getPosition конвертує координати в номера рядків і стовпців на панелі.
+     * @param x Координата X.
+     * @param y Координата Y.
+     * @param squareSize Довжина однієї сторони клітини в пікселях.
+     * @return об'єкт GridPosition із результатом обрахувань.
+     */
     default GridPosition getPosition(double x, double y, int squareSize) {
         int gridx;
         int gridy;
@@ -79,6 +92,14 @@ public interface GridCalculations {
         return new GridPosition(gridx, gridy);
     }
 
+    /**
+     * createShips приєднує прямокутники кораблів до потрібної панелі та розташовує їх один під одним на певних координатах.
+     * @param shipArr Масив кораблей для яких виконується маніпуляції.
+     * @param fieldPane Панель, до якої потрібно приєднати прямокутники кораблі.
+     * @param squareSize Довжина однієї сторони клітини в пікселях.
+     * @param shipStartX Координата X від заданої fieldPane, на якій відбувається розташування.
+     * @param shipStartY Координата Y від заданої fieldPane, на якій відбувається розташування.
+     */
     default void createShips (Ship[] shipArr, Pane fieldPane, int squareSize, int shipStartX, int shipStartY) {
         for (int i = 0; i < 10; i++) {
             shipArr[i] =
@@ -97,6 +118,13 @@ public interface GridCalculations {
         }
     }
 
+    /**
+     * canPlace перевіряє чи можна поставити заданий корабель в певну позицію, чи не буде він заважати іншим кораблям.
+     * @param s Корабель для якого виконується перевірка.
+     * @param shipArr Масив із всіма кораблями.
+     * @param position Координати (рядок і стовпець) лівого верхнього кута корабля s.
+     * @return true, якщо поставити корабель в задану позицію можна, false, якщо ні.
+     */
     default boolean canPlace(Ship s, Ship[] shipArr, GridPosition position) {
         for (int sn = 0; sn < 10; sn++) {
             if (s.getShipID() != sn ) {
@@ -122,6 +150,12 @@ public interface GridCalculations {
         return true;
     }
 
+    /**
+     * autoplaceShips випадково розташовує кораблі на їх панелі.
+     * @param shipArr Масив кораблей які будуть розташовані.
+     * @param squareSize Довжина однієї сторони клітини в пікселях.
+     * @param fieldSpots Кількість рядків та стовспців на панелі.
+     */
     default void autoplaceShips(Ship[] shipArr, int squareSize, int fieldSpots) {
         int gridx, gridy;
         boolean shipNotPlaced, randVertical;
@@ -165,6 +199,10 @@ public interface GridCalculations {
         }
     }
 
+    /**
+     * drawShips викликає метод draw() для кожного елемента масиву кораблей.
+     * @param shipArr Масив кораблей, для яких буде викликан метод draw().
+     */
     default void drawShips(Ship[] shipArr) {
         for (int i = 0; i < 10; i++) {
             shipArr[i].draw();

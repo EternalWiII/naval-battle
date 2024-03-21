@@ -9,5 +9,7 @@ module com.navel.navalbattle {
     opens com.navel.navalbattle.ships to javafx.fxml;
     exports com.navel.navalbattle.records;
     opens com.navel.navalbattle.records to javafx.fxml;
+    exports com.navel.navalbattle.interfaces;
+    opens com.navel.navalbattle.interfaces to javafx.fxml;
 //    opens com.navel.navalbattle.controllers to javafx.fxml;
 }

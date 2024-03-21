@@ -1,5 +1,7 @@
 package com.navel.navalbattle;
 
+import com.navel.navalbattle.interfaces.GridCalculations;
+import com.navel.navalbattle.interfaces.WindowsManipulations;
 import com.navel.navalbattle.ships.*;
 import com.navel.navalbattle.records.GridPosition;
 import javafx.event.ActionEvent;
@@ -20,23 +22,19 @@ import javafx.scene.input.KeyEvent;
 
 import java.io.IOException;
 
-public class ShipsPositioningController extends Controller implements GridCalculations {
-    @FXML
+public class ShipsPositioningController extends Controller implements GridCalculations, WindowsManipulations {
     private Stage stage;
     @FXML
     private Pane fieldPane;
-    @FXML
-    private BorderPane borderPane;
     private int shipStartX = fieldSize + squareSize;
     private int shipStartY = 0;
     Ship[] shipArr;
     boolean isDragged = false;
     private Ship draggedShip;
 
-    public ShipsPositioningController() {
-        super();
-    }
-
+    /**
+     * Вкионується при ініціалізації відповідного контроллера, створює та розташовує кораблі користувача.
+     */
     @FXML
     public void initialize() {
         shipArr = new Ship[10];
@@ -45,6 +43,10 @@ public class ShipsPositioningController extends Controller implements GridCalcul
         addPositioningEvents(shipArr);
     }
 
+    /**
+     * Додає до кораблів користувача події, які відповідають за їх переміщення.
+     * @param shipArr Масив із кораблями користувача.
+     */
     private void addPositioningEvents(Ship[] shipArr) {
         for (Ship ship : shipArr) {
             ship.getRec().setOnMousePressed(event -> recPressed(event, ship));
@@ -53,6 +55,11 @@ public class ShipsPositioningController extends Controller implements GridCalcul
         }
     }
 
+    /**
+     * Оброблює момент натискання лівою кнопкою миші на корабель.
+     * @param event Подія миші.
+     * @param s Корабель, із якми відбуваєтсья подія.
+     */
     private void recPressed(MouseEvent event, Ship s) {
         s.setHomeX(s.getX());
         s.setHomeY(s.getY());
@@ -60,6 +67,11 @@ public class ShipsPositioningController extends Controller implements GridCalcul
         draggedShip = s;
     }
 
+    /**
+     * Оброблює момент перетягування лівою кнопкою миші корабля.
+     * @param event Подія миші.
+     * @param s Корабель, із якми відбуваєтсья подія.
+     */
     private void recDragged(MouseEvent event, Ship s) {
         isDragged = true;
 
@@ -72,6 +84,11 @@ public class ShipsPositioningController extends Controller implements GridCalcul
         s.draw();
     }
 
+    /**
+     * Оброблює момент відпускання лівою кнопкою миші корабля.
+     * @param event Подія миші.
+     * @param s Корабель, із якми відбуваєтсья подія.
+     */
     private void recReleased(MouseEvent event, Ship s) {
         isDragged = false;
         s.getRec().setFill(Color.RED);
@@ -99,33 +116,40 @@ public class ShipsPositioningController extends Controller implements GridCalcul
         }
     }
 
+    /**
+     * Цей метод викликається подією, яка спрацьовує при натисканні кнопки 'R'. Виконує поворот для корабля, який тримає користувач.
+     */
+    public void setRPressed() {
+        if(isDragged) {
+            draggedShip.flipIsVertical();
+        }
+    }
+
+    /**
+     * Завантажує наступну сцену гри та події для неї.
+     * @param e Подія натискання на кнопку.
+     * @throws IOException Помилка при читанні fxml файлу.
+     */
     @FXML
     protected void onStartClick(ActionEvent e) throws IOException {
-        boolean readyToGo = true;
-        for (int i = 0; i < 10; i++) {
-            if (shipArr[i].isVertical()) {
-                if (shipArr[i].getX() + shipArr[i].getOffset() >= 400) {
-                    readyToGo = false;
-                }
-            }
-            else {
-                if (shipArr[i].getX() >= 400) {
-                    readyToGo = false;
-                }
-            }
-        }
-        if (readyToGo) {
+        if (checkShipsPlaced()) {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("game.fxml"));
-            Parent root = loader.load();
+            Scene scene = new Scene(loader.load());
             GameController controller = loader.getController();
             controller.setPlayerShipArr(shipArr);
 
-
             stage = (Stage) ((Node) e.getSource()).getScene().getWindow();
-            Scene scene = new Scene(root);
 
             stage.setScene(scene);
             stage.show();
+
+            scene.setOnKeyPressed(event -> {
+                event.consume();
+
+                if (event.getCode() == KeyCode.ESCAPE) {
+                    processReturnToMain(stage);
+                }
+            });
         }
         else {
             Alert alert = new Alert(Alert.AlertType.WARNING);
@@ -133,23 +157,30 @@ public class ShipsPositioningController extends Controller implements GridCalcul
         }
     }
 
-    public void setRPressed() {
-        if(isDragged) {
-            draggedShip.flipIsVertical();
-        }
-    }
-
-    protected void onEscBtn() {
-        borderPane.setOnKeyPressed(new EventHandler<KeyEvent>() {
-            public void handle(final KeyEvent keyEvent) {
-                if (keyEvent.getCode() == KeyCode.ESCAPE) {
-                    stage = (Stage) borderPane.getScene().getWindow();
-                    stage.close();
+    /**
+     * Перевіряє чи розташував користувач всі свої кораблі.
+     * @return true якщо всі коряблі стоять коректно, false якщо користувач розташував ще не всі кораблі.
+     */
+    protected boolean checkShipsPlaced() {
+        for (int i = 0; i < 10; i++) {
+            if (shipArr[i].isVertical()) {
+                if (shipArr[i].getX() + shipArr[i].getOffset() >= 400) {
+                    return false;
                 }
             }
-        });
+            else {
+                if (shipArr[i].getX() >= 400) {
+                    return false;
+                }
+            }
+        }
+        return true;
     }
 
+    /**
+     * Оброблює натискання на кнопку очищення ігрового поля. Відповідно, повертає всі кораблі на свої початкові позиції поза ігровим полем.
+     * @param e Подія натискання на кнопку.
+     */
     @FXML
     protected void onClearFieldClick(ActionEvent e) {
         int newY = 0;
@@ -164,6 +195,10 @@ public class ShipsPositioningController extends Controller implements GridCalcul
         }
     }
 
+    /**
+     * Оброблює натискання на кнопку авторозташування кораблів. Відповідно, автоматично розташовує всі кораблі користувача на ігровому полі із урахуванням всіх правил.
+     * @param e Подія натискання на кнопку.
+     */
     @FXML
     protected void onAutoplaceClick(ActionEvent e) {
         onClearFieldClick(e);

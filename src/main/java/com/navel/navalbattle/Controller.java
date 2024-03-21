@@ -8,6 +8,9 @@ public class Controller {
     protected int fieldSize;
     protected int squareSize;
 
+    /**
+     * Виконує зчитання з файлу основниї даних, які необхідні для роботи гри.
+     */
     public Controller() {
         File gameData = new File("src/main/resources/data/game_data.properties");
         if (!gameData.exists()) {
@@ -34,6 +37,10 @@ public class Controller {
         squareSize = fieldSize / fieldSpots;
     }
 
+    /**
+     * У випадку проблем із файлом даних, створює новий із значеннями за замовчуванням.
+     * @param file Шлях за яким буде створено новий файл.
+     */
     private void createDefaultGameData(File file) {
         Properties properties = new Properties();
         properties.setProperty("fieldSize", "400");
