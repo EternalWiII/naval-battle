@@ -29,7 +29,7 @@ public class MainMenuController extends Controller implements WindowsManipulatio
         Scene scene = new Scene(loader.load());
         ShipsPositioningController controller = loader.getController();
 
-        stage = (Stage) ((Node) e.getSource()).getScene().getWindow();
+        stage = (Stage) ((Node) e.getSource()).getScene().getWindow();;
 
         stage.setScene(scene);
         stage.show();
@@ -51,7 +51,8 @@ public class MainMenuController extends Controller implements WindowsManipulatio
      * Оброблює натискання на кнопку виходу.
      */
     @FXML
-    protected void onExitClick() {
+    protected void onExitClick(ActionEvent e) {
+        stage = (Stage) ((Node) e.getSource()).getScene().getWindow();
         processExit(stage);
     }
 }

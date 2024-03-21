@@ -6,6 +6,7 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 
 public class Ship {
+    private static int numberOfShips = 0;
     protected int shipID;
     protected int shipSize;
     protected int squareSize;
@@ -34,6 +35,16 @@ public class Ship {
         this.x = x;
         this.y = y;
         this.shipID = shipID;
+
+        numberOfShips++;
+    }
+
+    /**
+     * Повертає статичне поле numberOfShips.
+     * @return Статичне поле numberOfShips.
+     */
+    public static int getNumberOfShips() {
+        return numberOfShips;
     }
 
     /**

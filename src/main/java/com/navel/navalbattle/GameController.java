@@ -38,7 +38,6 @@ public class GameController extends Controller implements GridCalculations {
         enemyFieldPane.setOnMousePressed((MouseEvent event) -> {
             double mouseX = event.getX();
             double mouseY = event.getY();
-            System.out.println("Mouse pressed at X: " + mouseX + ", Y: " + mouseY);
             checkHit(mouseX, mouseY);
 //            if (isPlayersTurn) {
 //

@@ -17,6 +17,7 @@ public interface WindowsManipulations {
      */
     default void processExit (Stage stage) {
         Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+        alert.setHeaderText("Exit from application");
 
         if (alert.showAndWait().get() == ButtonType.OK) {
             stage.close();
@@ -29,6 +30,7 @@ public interface WindowsManipulations {
      */
     default void processReturnToMain (Stage stage) {
         Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+        alert.setHeaderText("Return to main menu");
         if (alert.showAndWait().get() == ButtonType.OK) {
             FXMLLoader mainLoader = new FXMLLoader(Main.class.getResource("main_menu.fxml"));
             try {
