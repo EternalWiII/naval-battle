@@ -1,5 +1,7 @@
 package com.navel.navalbattle.bot;
 
+import com.navel.navalbattle.records.GridPosition;
+
 interface Bot {
     /**
      * Виконує удар по кораблям користувача.
@@ -11,5 +13,5 @@ interface Bot {
     /**
      * Робить вибір клітини, по якій потрібно нанести удар.
      */
-    void makeDicision();
+    GridPosition makeDicision(boolean[][] isAlreadyHit);
 }

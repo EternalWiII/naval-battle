@@ -28,8 +28,8 @@ public class ShipsPositioningController extends Controller implements GridCalcul
     private Pane fieldPane;
     private int shipStartX = fieldSize + squareSize;
     private int shipStartY = 0;
-    Ship[] shipArr;
-    boolean isDragged = false;
+    private Ship[] shipArr;
+    private boolean isDragged = false;
     private Ship draggedShip;
 
     /**
@@ -131,7 +131,7 @@ public class ShipsPositioningController extends Controller implements GridCalcul
      * @throws IOException Помилка при читанні fxml файлу.
      */
     @FXML
-    protected void onStartClick(ActionEvent e) throws IOException {
+    protected void onStartClick(ActionEvent e) throws IOException, InterruptedException {
         if (checkShipsPlaced()) {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("game.fxml"));
             Scene scene = new Scene(loader.load());

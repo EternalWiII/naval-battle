@@ -104,9 +104,9 @@ public interface GridCalculations {
         for (int i = 0; i < 10; i++) {
             shipArr[i] =
                     switch (i) {
-                        case 0 -> new FourBlocksShip(i, squareSize, shipStartX, shipStartY);
-                        case 1, 2 -> new ThreeBlocksShip(i, squareSize, shipStartX, shipStartY);
-                        case 3, 4, 5 -> new TwoBlocksShip(i, squareSize, shipStartX, shipStartY);
+                        case 0 -> new FourBlockShip(i, squareSize, shipStartX, shipStartY);
+                        case 1, 2 -> new ThreeBlockShip(i, squareSize, shipStartX, shipStartY);
+                        case 3, 4, 5 -> new TwoBlockShip(i, squareSize, shipStartX, shipStartY);
                         default -> new OneBlockShip(i, squareSize, shipStartX, shipStartY);
                     };
 

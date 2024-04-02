@@ -48,90 +48,6 @@ public class Ship {
     }
 
     /**
-     * Відмальовує пямокутник корябля на поточних координатах.
-     */
-    public void draw() {
-        rec.setTranslateX(x);
-        rec.setTranslateY(y);
-    }
-
-    /**
-     * Виконує зміну стану корабля (вертикальний або горизонтальний) на протележний.
-     */
-    public void flipIsVertical() {
-        if (isVertical) {
-            isVertical = false;
-            rec.setRotate(0);
-            draw();
-        }
-        else {
-            isVertical = true;
-            rec.setRotate(90);
-            draw();
-        }
-    }
-
-    /**
-     * Знаходить область клітин панелі, які зайняті кораблем.
-     * @return об'єкт ShipUsedArea із результатом обрахувань.
-     */
-    public ShipUsedArea getUsedArea() {
-        int[] area = new int[4];
-        if (isVertical) {
-            if (((int)(x) + (int)offset ) / squareSize >= 10) {
-                System.out.println(((int)(x) + (int)offset / squareSize));
-                area[0] = ((int)(x) + (int)offset) / squareSize;
-                area[1] = area[0];
-
-                area[2] = ((int)(y) - (int)offset) / squareSize;
-                area[3] = area[2] + shipSize - 1;
-            }
-            else {
-                area[0] = ((int)(x) + (int)offset) / squareSize - 1;
-                area[1] = area[0] + 2;
-
-                area[2] = ((int)(y) - (int)offset) / squareSize - 1;
-                area[3] = area[2] + shipSize + 1;
-            }
-        }
-        else {
-            if (((int)(x) / squareSize) >= 10) {
-                area[0] = (int)(x) / squareSize;
-                area[1] = area[0] + shipSize - 1;
-
-                area[2] = (int)(y) / squareSize;
-                area[3] = area[2];
-            }
-            else {
-                area[0] = (int)(x) / squareSize - 1;
-                area[1] = area[0] + shipSize + 1;
-
-                area[2] = (int)(y) / squareSize - 1;
-                area[3] = area[2] + 2;
-            }
-        }
-
-        return new ShipUsedArea(area[0], area[1], area[2] , area[3]);
-    }
-
-    /**
-     * Зменшує здоров'я корабля та перевіряє чи не зменшилося воно до 0.
-     * @return true, якщо здоров'я тепер дорівнює 0, false, якщо в корабля ще  є здоров'я.
-     */
-    public boolean getHit() {
-        hp--;
-        return hp == 0;
-    }
-
-    /**
-     * Візуально змінює корабель до знищеного стану.
-     */
-    public void becomeDestroyed() {
-        rec.setFill(Color.GRAY);
-        rec.toFront();
-    }
-
-    /**
      * Гетер для поля homeX.
      * @return поле homeX.
      */
@@ -257,5 +173,89 @@ public class Ship {
      */
     public void setSquareSize(int squareSize) {
         this.squareSize = squareSize;
+    }
+
+    /**
+     * Відмальовує пямокутник корябля на поточних координатах.
+     */
+    public void draw() {
+        rec.setTranslateX(x);
+        rec.setTranslateY(y);
+    }
+
+    /**
+     * Виконує зміну стану корабля (вертикальний або горизонтальний) на протележний.
+     */
+    public void flipIsVertical() {
+        if (isVertical) {
+            isVertical = false;
+            rec.setRotate(0);
+            draw();
+        }
+        else {
+            isVertical = true;
+            rec.setRotate(90);
+            draw();
+        }
+    }
+
+    /**
+     * Знаходить область клітин панелі, які зайняті кораблем.
+     * @return об'єкт ShipUsedArea із результатом обрахувань.
+     */
+    public ShipUsedArea getUsedArea() {
+        int[] area = new int[4];
+        if (isVertical) {
+            if (((int)(x) + (int)offset ) / squareSize >= 10) {
+                System.out.println(((int)(x) + (int)offset / squareSize));
+                area[0] = ((int)(x) + (int)offset) / squareSize;
+                area[1] = area[0];
+
+                area[2] = ((int)(y) - (int)offset) / squareSize;
+                area[3] = area[2] + shipSize - 1;
+            }
+            else {
+                area[0] = ((int)(x) + (int)offset) / squareSize - 1;
+                area[1] = area[0] + 2;
+
+                area[2] = ((int)(y) - (int)offset) / squareSize - 1;
+                area[3] = area[2] + shipSize + 1;
+            }
+        }
+        else {
+            if (((int)(x) / squareSize) >= 10) {
+                area[0] = (int)(x) / squareSize;
+                area[1] = area[0] + shipSize - 1;
+
+                area[2] = (int)(y) / squareSize;
+                area[3] = area[2];
+            }
+            else {
+                area[0] = (int)(x) / squareSize - 1;
+                area[1] = area[0] + shipSize + 1;
+
+                area[2] = (int)(y) / squareSize - 1;
+                area[3] = area[2] + 2;
+            }
+        }
+
+        return new ShipUsedArea(area[0], area[1], area[2] , area[3]);
+    }
+
+    /**
+     * Зменшує здоров'я корабля та перевіряє чи не зменшилося воно до 0.
+     * @return true, якщо здоров'я тепер дорівнює 0, false, якщо в корабля ще  є здоров'я.
+     */
+    public boolean getHit() {
+        hp--;
+        return hp == 0;
+    }
+
+    /**
+     * Візуально змінює корабель до знищеного стану.
+     */
+    public void becomeDestroyed() {
+        rec.setFill(Color.GRAY);
+        rec.toFront();
     }
 }
