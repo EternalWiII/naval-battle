@@ -6,6 +6,7 @@ import com.navel.navalbattle.interfaces.WindowsManipulations;
 import com.navel.navalbattle.records.GridPosition;
 import com.navel.navalbattle.records.ShipUsedArea;
 import com.navel.navalbattle.ships.Ship;
+import com.navel.navalbattle.records.spotStatus;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -21,6 +22,8 @@ import javafx.scene.shape.Rectangle;
 import javafx.stage.Stage;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -38,14 +41,23 @@ public class GameController extends Controller implements GridCalculations, Wind
     private boolean isPlayersTurn;
     private EasyBot bot = new EasyBot();
 
-    private boolean[][] enemyIsAlreadyHit = new boolean[10][10];
-    private boolean[][] playerIsAlreadyHit = new boolean[10][10];
+    private List<List<spotStatus>> enemyIsAlreadyHit = new ArrayList<>();
+    private List<List<spotStatus>> playerIsAlreadyHit = new ArrayList<>();
 
     /**
      * Вкионується при ініціалізації відповідного контроллера, створює, розташовує та відмальовує ворожі кораблі, запускає процес гри.
      */
     @FXML
     public void initialize() {
+        for (int i = 0; i < 10; i++) {
+            enemyIsAlreadyHit.add(new ArrayList<>());
+            playerIsAlreadyHit.add(new ArrayList<>());
+            for (int j = 0; j < 10; j++) {
+                enemyIsAlreadyHit.get(i).add(spotStatus.UNKNOWN);
+                playerIsAlreadyHit.get(i).add(spotStatus.UNKNOWN);
+            }
+        }
+
         enemyShipArr = new Ship[10];
         createShips(enemyShipArr, enemyFieldPane, squareSize, 600, 0);
         autoplaceShips(enemyShipArr, squareSize, fieldSpots);
@@ -172,7 +184,7 @@ public class GameController extends Controller implements GridCalculations, Wind
      */
     public void checkHit(GridPosition coord) {
         Ship[] shipArr;
-        boolean[][] isAlreadyHit;
+        List<List<spotStatus>> isAlreadyHit;
         AtomicInteger aliveShips;
         Pane fieldPane;
 
@@ -190,7 +202,7 @@ public class GameController extends Controller implements GridCalculations, Wind
             fieldPane = playerFieldPane;
         }
 
-        if (isAlreadyHit[coord.x()][coord.y()]) {
+        if (isAlreadyHit.get(coord.x()).get(coord.y()) == spotStatus.EMPTY) {
             return;
         }
         else {
@@ -229,7 +241,7 @@ public class GameController extends Controller implements GridCalculations, Wind
      * Відмічає клітини навколо знищеного корабля.
      * @param ship Знищений корабель.
      */
-    private void markAreaAroundDeadShip(Ship ship, Pane fieldPane, boolean[][] isAlreadyHit) {
+    private void markAreaAroundDeadShip(Ship ship, Pane fieldPane, List<List<spotStatus>> isAlreadyHit) {
         Platform.runLater(() -> {
             ShipUsedArea deadArea = ship.getUsedArea();
 
@@ -244,8 +256,8 @@ public class GameController extends Controller implements GridCalculations, Wind
                         rec.setTranslateX(j * squareSize);
                         rec.setTranslateY(g * squareSize);
 
-                        if (!isAlreadyHit[j][g]) {
-                            isAlreadyHit[j][g] = true;
+                        if (isAlreadyHit.get(j).get(g) == spotStatus.UNKNOWN || isAlreadyHit.get(j).get(g) == spotStatus.HIT) {
+                            isAlreadyHit.get(j).set(g, spotStatus.EMPTY);
                             fieldPane.getChildren().add(rec);
                         }
                     }
@@ -259,7 +271,7 @@ public class GameController extends Controller implements GridCalculations, Wind
      * Відмічає клітину із промахом.
      * @param position Координати клітини.
      */
-    private void markMiss(GridPosition position, Pane fieldPane, boolean[][] isAlreadyHit) {
+    private void markMiss(GridPosition position, Pane fieldPane, List<List<spotStatus>> isAlreadyHit) {
         Platform.runLater(() -> {
             Rectangle rec = new Rectangle();
             rec.setHeight(squareSize);
@@ -267,7 +279,7 @@ public class GameController extends Controller implements GridCalculations, Wind
             rec.setFill(Color.GOLD);
 
             fieldPane.getChildren().add(rec);
-            isAlreadyHit[position.x()][position.y()] = true;
+            isAlreadyHit.get(position.x()).set(position.y(), spotStatus.EMPTY);
 
             rec.setTranslateX(position.x() * squareSize);
             rec.setTranslateY(position.y() * squareSize);
@@ -278,7 +290,7 @@ public class GameController extends Controller implements GridCalculations, Wind
      * Відмічає клітину із влученням.
      * @param position Координати клітини.
      */
-    private void markHit(GridPosition position, Pane fieldPane, boolean[][] isAlreadyHit) {
+    private void markHit(GridPosition position, Pane fieldPane, List<List<spotStatus>> isAlreadyHit) {
         Platform.runLater(() -> {
             Rectangle rec = new Rectangle();
             rec.setHeight(squareSize);
@@ -286,7 +298,7 @@ public class GameController extends Controller implements GridCalculations, Wind
             rec.setFill(Color.BLACK);
 
             fieldPane.getChildren().add(rec);
-            isAlreadyHit[position.x()][position.y()] = true;
+            isAlreadyHit.get(position.x()).set(position.y(), spotStatus.HIT);
 
             rec.setTranslateX(position.x() * squareSize);
             rec.setTranslateY(position.y() * squareSize);

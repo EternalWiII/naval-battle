@@ -1,6 +1,7 @@
 package com.navel.navalbattle.bot;
 
 import com.navel.navalbattle.records.GridPosition;
+import com.navel.navalbattle.records.spotStatus;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -25,7 +26,7 @@ public class EasyBot implements Bot {
         }
     }
     @Override
-    public GridPosition makeDicision(boolean[][] isAlreadyHit) {
+    public GridPosition makeDicision(List<List<spotStatus>> isAlreadyHit) {
         if (coordinatesList.size() != 0) {
             int index = rand.nextInt(coordinatesList.size());
 
