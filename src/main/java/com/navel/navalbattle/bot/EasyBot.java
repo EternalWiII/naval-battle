@@ -2,18 +2,40 @@ package com.navel.navalbattle.bot;
 
 import com.navel.navalbattle.records.GridPosition;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
 
 public class EasyBot implements Bot {
+    List<List<Integer>> coordinatesList = new ArrayList<>();
+    Random rand = new Random();
+
+    public EasyBot() {
+        int index = 0;
+
+        for (int i = 0; i < 10; i++) {
+            for (int j = 0; j < 10; j++) {
+                coordinatesList.add(new ArrayList<>());
+
+                coordinatesList.get(index).add(i);
+                coordinatesList.get(index).add(j);
+
+                index++;
+            }
+        }
+    }
     @Override
     public GridPosition makeDicision(boolean[][] isAlreadyHit) {
-        Random rand = new Random();
-        do {
-            int x = rand.nextInt(10);
-            int y = rand.nextInt(10);
-            if (!isAlreadyHit[x][y]) {
-                return new GridPosition(x, y);
-            }
-        } while (true);
+        if (coordinatesList.size() != 0) {
+            int index = rand.nextInt(coordinatesList.size());
+
+            int x = coordinatesList.get(index).get(0);
+            int y = coordinatesList.get(index).get(1);
+
+            coordinatesList.remove(index);
+
+            return new GridPosition(x, y);
+        }
+        return null;
     }
 }

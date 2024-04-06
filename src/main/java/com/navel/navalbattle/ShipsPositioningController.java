@@ -150,6 +150,8 @@ public class ShipsPositioningController extends Controller implements GridCalcul
                     processReturnToMain(stage);
                 }
             });
+
+            controller.startGame();
         }
         else {
             Alert alert = new Alert(Alert.AlertType.WARNING);
