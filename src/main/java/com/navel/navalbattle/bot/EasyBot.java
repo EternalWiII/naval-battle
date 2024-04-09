@@ -27,16 +27,13 @@ public class EasyBot implements Bot {
     }
     @Override
     public GridPosition makeDicision(List<List<spotStatus>> isAlreadyHit) {
-        if (coordinatesList.size() != 0) {
-            int index = rand.nextInt(coordinatesList.size());
+        int index = rand.nextInt(coordinatesList.size());
 
-            int x = coordinatesList.get(index).get(0);
-            int y = coordinatesList.get(index).get(1);
+        int x = coordinatesList.get(index).get(0);
+        int y = coordinatesList.get(index).get(1);
 
-            coordinatesList.remove(index);
+        coordinatesList.remove(index);
 
-            return new GridPosition(x, y);
-        }
-        return null;
+        return new GridPosition(x, y);
     }
 }
