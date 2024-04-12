@@ -1,5 +1,6 @@
 package com.navel.navalbattle;
 
+import com.navel.navalbattle.database.DatabaseConnector;
 import com.navel.navalbattle.interfaces.WindowsManipulations;
 import javafx.application.Application;
 import javafx.event.ActionEvent;
@@ -11,6 +12,7 @@ import javafx.scene.input.KeyCode;
 import javafx.stage.Stage;
 
 import java.io.IOException;
+import java.sql.SQLException;
 
 public class Main extends Application implements WindowsManipulations {
     /**
@@ -19,9 +21,10 @@ public class Main extends Application implements WindowsManipulations {
      * @throws IOException Помилка при читанні fxml файлу.
      */
     @Override
-    public void start(Stage stage) throws IOException {
-        FXMLLoader loader = new FXMLLoader(Main.class.getResource("main_menu.fxml"));
+    public void start(Stage stage) throws IOException, SQLException {
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("authorization.fxml"));
         Scene scene = new Scene(loader.load());
+        AuthorizationController controller = loader.getController();
 
         stage.setTitle("Naval battle");
         stage.setResizable(false);
@@ -42,6 +45,8 @@ public class Main extends Application implements WindowsManipulations {
                 processExit(stage);
             }
         });
+
+        controller.makeConnection();
     }
 
     /**

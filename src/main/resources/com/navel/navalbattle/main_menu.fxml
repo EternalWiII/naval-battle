@@ -9,5 +9,6 @@
       <ImageView fitHeight="400.0" fitWidth="400.0" pickOnBounds="true" preserveRatio="true" />
       <Button fx:id="exitBtn" layoutX="183.0" layoutY="316.0" mnemonicParsing="false" onAction="#onExitClick" text="Exit" />
       <Button fx:id="startGameBtn" layoutX="164.0" layoutY="97.0" mnemonicParsing="false" onAction="#onStartGameClick" text="Start game" />
+      <Button fx:id="statBtn" layoutX="169.0" layoutY="200.0" mnemonicParsing="false" onAction="#onStatClick" text="Statistics" />
    </children>
 </AnchorPane>

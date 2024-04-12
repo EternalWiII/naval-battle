@@ -1,6 +1,7 @@
 module com.navel.navalbattle {
     requires javafx.controls;
     requires javafx.fxml;
+    requires java.sql;
 
 
     opens com.navel.navalbattle to javafx.fxml;
