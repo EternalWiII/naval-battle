@@ -81,45 +81,4 @@ public class MainMenuController extends Controller implements WindowsManipulatio
             }
         });
     }
-
-    public void checkConnection() throws SQLException {
-        DatabaseConnector connector = new DatabaseConnector();
-
-        if (DatabaseConnector.getConnection() == null) {
-            Alert alert = new Alert(Alert.AlertType.ERROR, "Помилка підключення до бази даних", ButtonType.OK);
-            alert.showAndWait();
-            System.exit(1); //!!!!!!!!!!!!!!!!!
-        }
-
-        GridPane grid = new GridPane();
-        grid.setHgap(10);
-        grid.setVgap(10);
-
-        TextField username = new TextField();
-        username.setPromptText("Username");
-        PasswordField password = new PasswordField();
-        password.setPromptText("Password");
-
-        grid.add(username, 0, 0);
-        grid.add(password, 0, 1);
-
-        Dialog<ButtonType> dialog = new Dialog<>();
-        dialog.setTitle("Login");
-        dialog.setHeaderText("Enter your username and password");
-        dialog.getDialogPane().setContent(grid);
-
-        Button loginButton = new Button("Login");
-        loginButton.setOnAction(event -> {
-            dialog.setResult(ButtonType.OK);
-        });
-
-        Button registerButton = new Button("Register");
-        registerButton.setOnAction(event -> {
-            dialog.setResult(ButtonType.CANCEL);
-        });
-
-        if (dialog.showAndWait().get() == ButtonType.OK) {
-
-        }
-    }
 }

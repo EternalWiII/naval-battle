@@ -26,50 +26,49 @@ public class AuthorizationController extends Controller implements WindowsManipu
     @FXML
     private TextField passwordField;
 
-    public void makeConnection() {
-        DatabaseConnector databaseConnector = new DatabaseConnector();
-        connection = databaseConnector.getConnection();
-    }
     @FXML
     private void onLoginBtnPress(ActionEvent e) throws SQLException, IOException {
-        String query = "SELECT EXISTS (\n" +
-                "    SELECT 1\n" +
-                "    FROM accounts\n" +
-                "    WHERE username = ? AND password = ?\n" +
-                ") AS \"exists\";";
+        if (!checkInputFields()) {
+            return;
+        }
+
+        String query = "SELECT id\n" +
+                        "FROM accounts\n" +
+                        "WHERE username = ? AND password = ?;";
         PreparedStatement statement = DatabaseConnector.getConnection().prepareStatement(query);
         statement.setString(1, usernameField.getText());
         statement.setString(2, passwordField.getText());
         ResultSet resultSet = statement.executeQuery();
 
         if (resultSet.next()) {
+            DatabaseConnector.setUserId(resultSet.getInt(1));
 
-            if (resultSet.getBoolean(1)) {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("main_menu.fxml"));
+            Scene scene = new Scene(loader.load());
 
-                FXMLLoader loader = new FXMLLoader(getClass().getResource("main_menu.fxml"));
-                Scene scene = new Scene(loader.load());
-                MainMenuController controller = loader.getController();
+            Stage stage = (Stage) usernameField.getScene().getWindow();
 
-                Stage stage = (Stage) usernameField.getScene().getWindow();
+            stage.setScene(scene);
 
-                stage.setScene(scene);
+            scene.setOnKeyPressed(event -> {
+                event.consume();
 
-                scene.setOnKeyPressed(event -> {
-                    event.consume();
-
-                    if (event.getCode() == KeyCode.ESCAPE) {
-                        processExit(stage);
-                    }
-                });
-            } else {
-                Alert alert = new Alert(Alert.AlertType.ERROR, "You are not authorized", ButtonType.OK);
-                alert.showAndWait();
-            }
+                if (event.getCode() == KeyCode.ESCAPE) {
+                    processExit(stage);
+                }
+            });
+        } else {
+            Alert alert = new Alert(Alert.AlertType.ERROR, "You are not authorized", ButtonType.OK);
+            alert.showAndWait();
         }
     }
 
     @FXML
     private void onRegisterBtnPress() throws SQLException, IOException {
+        if (!checkInputFields()) {
+            return;
+        }
+
         String query = "INSERT INTO accounts (username, password) VALUES (?, ?);";
         PreparedStatement statement = DatabaseConnector.getConnection().prepareStatement(query);
         statement.setString(1, usernameField.getText());
@@ -78,9 +77,20 @@ public class AuthorizationController extends Controller implements WindowsManipu
         try {
             statement.executeUpdate();
 
+            query = "SELECT id\n" +
+                    "FROM accounts\n" +
+                    "WHERE username = ? AND password = ?;";
+            statement = DatabaseConnector.getConnection().prepareStatement(query);
+            statement.setString(1, usernameField.getText());
+            statement.setString(2, passwordField.getText());
+            statement.execute();
+
+            ResultSet resultSet = statement.executeQuery();
+            resultSet.next();
+            DatabaseConnector.setUserId(resultSet.getInt(1));
+
             FXMLLoader loader = new FXMLLoader(getClass().getResource("main_menu.fxml"));
             Scene scene = new Scene(loader.load());
-            MainMenuController controller = loader.getController();
 
             Stage stage = (Stage) usernameField.getScene().getWindow();
 
@@ -95,7 +105,19 @@ public class AuthorizationController extends Controller implements WindowsManipu
             });
         } catch (SQLException e) {
             Alert alert = new Alert(Alert.AlertType.ERROR, "Registration failed", ButtonType.OK);
+            alert.setContentText("This account name has already been taken.");
             alert.showAndWait();
         }
+    }
+
+    private boolean checkInputFields() {
+        if (usernameField.getText().isEmpty() || passwordField.getText().isEmpty()) {
+            Alert alert = new Alert(Alert.AlertType.ERROR, "Fill in all fields", ButtonType.OK);
+            alert.showAndWait();
+
+            return false;
+        }
+
+        return true;
     }
 }

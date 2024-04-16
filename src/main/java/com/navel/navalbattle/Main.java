@@ -6,6 +6,7 @@ import javafx.application.Application;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
+import javafx.scene.chart.PieChart;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
 import javafx.scene.input.KeyCode;
@@ -22,6 +23,27 @@ public class Main extends Application implements WindowsManipulations {
      */
     @Override
     public void start(Stage stage) throws IOException, SQLException {
+        if(!DatabaseConnector.makeConnection()) {
+            Alert alert = new Alert(Alert.AlertType.ERROR, "Can't connect to database", ButtonType.OK);
+            alert.setContentText("You will continue without saving your statistics. If you want to save it, please, restart the game.");
+            alert.showAndWait();
+
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("main_menu.fxml"));
+            Scene scene = new Scene(loader.load());
+
+            stage.setScene(scene);
+
+            scene.setOnKeyPressed(event -> {
+                event.consume();
+
+                if (event.getCode() == KeyCode.ESCAPE) {
+                    processExit(stage);
+                }
+            });
+
+            return;
+        }
+
         FXMLLoader loader = new FXMLLoader(getClass().getResource("authorization.fxml"));
         Scene scene = new Scene(loader.load());
         AuthorizationController controller = loader.getController();
@@ -46,7 +68,7 @@ public class Main extends Application implements WindowsManipulations {
             }
         });
 
-        controller.makeConnection();
+
     }
 
     /**

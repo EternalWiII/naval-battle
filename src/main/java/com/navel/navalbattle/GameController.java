@@ -2,6 +2,7 @@ package com.navel.navalbattle;
 
 import com.navel.navalbattle.bot.EasyBot;
 import com.navel.navalbattle.bot.HardBot;
+import com.navel.navalbattle.database.DatabaseConnector;
 import com.navel.navalbattle.interfaces.GridCalculations;
 import com.navel.navalbattle.interfaces.WindowsManipulations;
 import com.navel.navalbattle.records.GridPosition;
@@ -23,6 +24,8 @@ import javafx.scene.shape.Rectangle;
 import javafx.stage.Stage;
 
 import java.io.IOException;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
@@ -42,6 +45,8 @@ public class GameController extends Controller implements GridCalculations, Wind
     private boolean isPlayersTurn;
     private EasyBot bot = new EasyBot();
     private HardBot hBot = new HardBot();
+    private int playerHits = 0;
+    private int playerTotalShots = 0;
 
     private List<List<spotStatus>> enemyIsAlreadyHit = new ArrayList<>();
     private List<List<spotStatus>> playerIsAlreadyHit = new ArrayList<>();
@@ -132,6 +137,18 @@ public class GameController extends Controller implements GridCalculations, Wind
         stage.show();
     }
 
+    private void saveGameStatistics(boolean isPlayersWin) throws SQLException {
+        if (DatabaseConnector.getConnection() != null) {
+            String query = "INSERT INTO events (player_id, event_type, player_hits, player_total_shots) VALUES (?, ?, ?, ?)";
+            PreparedStatement statement = DatabaseConnector.getConnection().prepareStatement(query);
+            statement.setInt(1, DatabaseConnector.getUserId());
+            statement.setObject(2, isPlayersWin ? "win" : "loss", java.sql.Types.OTHER);
+            statement.setInt(3, playerHits);
+            statement.setInt(4, playerTotalShots);
+            statement.executeUpdate();
+        }
+    }
+
     private void checkVictory() {
         if (alivePlayerShips.get() == 0) {
             gameIsActive = false;
@@ -143,12 +160,14 @@ public class GameController extends Controller implements GridCalculations, Wind
                 alert.setContentText("All your ships have been destroyed.");
                 if (alert.showAndWait().get() == ButtonType.OK) {
                     try {
+                        saveGameStatistics(false);
                         endGame();
-                    } catch (IOException e) {
+                    } catch (IOException | SQLException e) {
                         e.printStackTrace();
                     }
                 }
             });
+
         } else if (aliveEnemyShips.get() == 0) {
             gameIsActive = false;
             Platform.runLater(() -> {
@@ -159,9 +178,12 @@ public class GameController extends Controller implements GridCalculations, Wind
                 alert.setContentText("All enemy ships have been destroyed.");
                 if (alert.showAndWait().get() == ButtonType.OK) {
                     try {
+                        saveGameStatistics(true);
                         endGame();
                     } catch (IOException e) {
                         e.printStackTrace();
+                    } catch (SQLException e) {
+                        throw new RuntimeException(e);
                     }
                 }
             });
@@ -222,6 +244,8 @@ public class GameController extends Controller implements GridCalculations, Wind
                 if (area.xMin() + 1 <= coord.x() && area.xMax() - 1 >= coord.x() && area.yMin() + 1 <= coord.y() && area.yMax() - 1 >= coord.y()) {
 
                     markHit(coord, fieldPane, isAlreadyHit);
+                    playerHits++;
+                    playerTotalShots++;
 
                     if(shipArr[i].getHit()) {
                         aliveShips.decrementAndGet();
@@ -234,6 +258,7 @@ public class GameController extends Controller implements GridCalculations, Wind
             }
 
             markMiss(coord, fieldPane, isAlreadyHit);
+            playerTotalShots++;
             checkVictory();
             playerTurnActive = false;
             flipTurn();

@@ -1,6 +1,7 @@
 package com.navel.navalbattle.interfaces;
 
 import com.navel.navalbattle.Main;
+import com.navel.navalbattle.database.DatabaseConnector;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
@@ -20,6 +21,7 @@ public interface WindowsManipulations {
         alert.setHeaderText("Exit from application");
 
         if (alert.showAndWait().get() == ButtonType.OK) {
+            DatabaseConnector.closeConnection();
             stage.close();
         }
     }
