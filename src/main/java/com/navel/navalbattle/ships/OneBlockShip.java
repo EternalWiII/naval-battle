@@ -1,5 +1,8 @@
 package com.navel.navalbattle.ships;
 
+import javafx.scene.image.Image;
+import javafx.scene.paint.ImagePattern;
+
 public class OneBlockShip extends Ship {
 
     /**
@@ -17,5 +20,7 @@ public class OneBlockShip extends Ship {
         offset = 0;
         rec.setWidth(squareSize * shipSize);
         rec.setHeight(squareSize);
+        shipImage = new Image(getClass().getResourceAsStream("/images/oneBlockShip.png"));
+        rec.setFill(new ImagePattern(shipImage));
     }
 }

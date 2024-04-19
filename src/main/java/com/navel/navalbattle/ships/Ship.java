@@ -1,8 +1,10 @@
 package com.navel.navalbattle.ships;
 
 import com.navel.navalbattle.records.ShipUsedArea;
+import javafx.scene.image.Image;
 import javafx.scene.paint.Color;
 
+import javafx.scene.paint.ImagePattern;
 import javafx.scene.shape.Rectangle;
 
 public class Ship {
@@ -19,6 +21,7 @@ public class Ship {
     protected boolean homeIsVertical;
     protected double offset = 0;
     protected int hp;
+    protected Image shipImage;
 
     /**
      * Конструктор об'єкта Ship, який ініціалізує основні параметри.
@@ -30,8 +33,7 @@ public class Ship {
     public Ship(int shipID, int squareSize, int x, int y) {
         this.squareSize = squareSize;
         rec = new Rectangle();
-        rec.setFill(Color.RED);
-        rec.setStroke(Color.BLACK);
+        rec.setOpacity(0);
         this.x = x;
         this.y = y;
         this.shipID = shipID;
@@ -254,8 +256,20 @@ public class Ship {
     /**
      * Візуально змінює корабель до знищеного стану.
      */
-    public void becomeDestroyed() {
-        rec.setFill(Color.GRAY);
-        rec.toFront();
+    public void becomeVisible() {
+        Thread becomeVisibleAnimation = new Thread() {
+            @Override
+            public void run() {
+                for (int i = 0; i < 10; i++) {
+                    rec.setOpacity(i * 0.1);
+                    try {
+                        Thread.sleep(50);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+        };
+        becomeVisibleAnimation.start();
     }
 }

@@ -40,6 +40,9 @@ public class ShipsPositioningController extends Controller implements GridCalcul
         shipArr = new Ship[10];
 
         createShips(shipArr, fieldPane, squareSize, shipStartX, shipStartY);
+        for (Ship ship : shipArr) {
+            ship.becomeVisible();
+        }
         addPositioningEvents(shipArr);
     }
 
@@ -76,7 +79,6 @@ public class ShipsPositioningController extends Controller implements GridCalcul
         isDragged = true;
 
         s.getRec().toFront();
-        s.getRec().setFill(Color.ORANGE);
 
         s.setX((event.getSceneX()) - (double)(squareSize * s.getShipSize()) / 2 - 20);
         s.setY((event.getSceneY()) - (double)(squareSize) / 2 - 70);
@@ -91,7 +93,6 @@ public class ShipsPositioningController extends Controller implements GridCalcul
      */
     private void recReleased(MouseEvent event, Ship s) {
         isDragged = false;
-        s.getRec().setFill(Color.RED);
 
         GridPosition position = getPosition(s, squareSize);
 

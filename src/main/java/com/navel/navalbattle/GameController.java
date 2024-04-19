@@ -15,11 +15,11 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
-import javafx.scene.input.KeyCode;
+import javafx.scene.image.Image;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Pane;
-import javafx.scene.paint.Color;
+import javafx.scene.paint.ImagePattern;
 import javafx.scene.shape.Rectangle;
 import javafx.stage.Stage;
 
@@ -249,6 +249,8 @@ public class GameController extends Controller implements GridCalculations, Wind
 
                     if(shipArr[i].getHit()) {
                         aliveShips.decrementAndGet();
+                        shipArr[i].draw();
+                        shipArr[i].becomeVisible();
                         markAreaAroundDeadShip(shipArr[i], fieldPane, isAlreadyHit);
                     }
 
@@ -281,26 +283,30 @@ public class GameController extends Controller implements GridCalculations, Wind
             for (int g = deadArea.yMin(); g <= deadArea.yMax(); g++) {
 
                 if (j >= 0 && j <= 9 && g >= 0 && g <= 9) {
-                    isAlreadyHit.get(j).set(g, spotStatus.EMPTY);
-
+                    spotStatus status = isAlreadyHit.get(j).get(g);
                     int finalG = g;
                     int finalJ = j;
                     Platform.runLater(() -> {
-                        Rectangle rec = new Rectangle();
-                        rec.setHeight(squareSize);
-                        rec.setWidth(squareSize);
-                        rec.setFill(Color.WHITE);
-                        rec.setTranslateX(finalJ * squareSize);
-                        rec.setTranslateY(finalG * squareSize);
+                        if (status == spotStatus.UNKNOWN) {
+                            Rectangle rec = new Rectangle();
+                            rec.setHeight(squareSize);
+                            rec.setWidth(squareSize);
+                            Image image = new Image(getClass().getResourceAsStream("/images/miss.png"));
+                            rec.setFill(new ImagePattern(image));
+                            rec.setTranslateX(finalJ * squareSize);
+                            rec.setTranslateY(finalG * squareSize);
 
-                        fieldPane.getChildren().add(rec);
+                            fieldPane.getChildren().add(rec);
+                        }
                     });
+
+                    isAlreadyHit.get(j).set(g, spotStatus.EMPTY);
                 }
             }
         }
 
         Platform.runLater(() -> {
-            ship.becomeDestroyed();
+            ship.becomeVisible();
         });
     }
 
@@ -315,7 +321,24 @@ public class GameController extends Controller implements GridCalculations, Wind
             Rectangle rec = new Rectangle();
             rec.setHeight(squareSize);
             rec.setWidth(squareSize);
-            rec.setFill(Color.GOLD);
+            Image image = new Image(getClass().getResourceAsStream("/images/miss.png"));
+            rec.setFill(new ImagePattern(image));
+            rec.setOpacity(0);
+
+            Thread missAnimation = new Thread() {
+                @Override
+                public void run() {
+                    for (int i = 0; i < 10; i++) {
+                        rec.setOpacity(i * 0.1);
+                        try {
+                            Thread.sleep(50);
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }
+            };
+            missAnimation.start();
 
             fieldPane.getChildren().add(rec);
 
@@ -335,7 +358,24 @@ public class GameController extends Controller implements GridCalculations, Wind
             Rectangle rec = new Rectangle();
             rec.setHeight(squareSize);
             rec.setWidth(squareSize);
-            rec.setFill(Color.BLACK);
+            Image image = new Image(getClass().getResourceAsStream("/images/hit.png"));
+            rec.setFill(new ImagePattern(image));
+            rec.setOpacity(0);
+
+            Thread hitAnimation = new Thread() {
+                @Override
+                public void run() {
+                    for (int i = 0; i < 10; i++) {
+                        rec.setOpacity(i * 0.1);
+                        try {
+                            Thread.sleep(50);
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }
+            };
+            hitAnimation.start();
 
             fieldPane.getChildren().add(rec);
 

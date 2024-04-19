@@ -139,7 +139,6 @@ public class HardBot implements Bot {
 
                         switch (actionsList.get(curAction)) {
                             case 0:
-                                System.out.println("CASE 0");
                                 if (x > 0 && isAlreadyHit.get(x - 1).get(y) == spotStatus.UNKNOWN) {
                                     coordinatesList.remove(new ArrayList<>(List.of(x - 1, y)));
                                     actionsList.remove(curAction);
@@ -148,7 +147,6 @@ public class HardBot implements Bot {
                                 actionsList.remove(curAction);
                                 break;
                             case 1:
-                                System.out.println("CASE 1");
                                 if (x < 9 && isAlreadyHit.get(x + 1).get(y) == spotStatus.UNKNOWN) {
                                     coordinatesList.remove(new ArrayList<>(List.of(x + 1, y)));
                                     actionsList.remove(curAction);
@@ -157,7 +155,6 @@ public class HardBot implements Bot {
                                 actionsList.remove(curAction);
                                 break;
                             case 2:
-                                System.out.println("CASE 2");
                                 if (y > 0 && isAlreadyHit.get(x).get(y - 1) == spotStatus.UNKNOWN) {
                                     coordinatesList.remove(new ArrayList<>(List.of(x, y - 1)));
                                     actionsList.remove(curAction);
@@ -166,7 +163,6 @@ public class HardBot implements Bot {
                                 actionsList.remove(curAction);
                                 break;
                             case 3:
-                                System.out.println("CASE 3");
                                 if (y < 9 && isAlreadyHit.get(x).get(y + 1) == spotStatus.UNKNOWN) {
                                     coordinatesList.remove(new ArrayList<>(List.of(x, y + 1)));
                                     actionsList.remove(curAction);

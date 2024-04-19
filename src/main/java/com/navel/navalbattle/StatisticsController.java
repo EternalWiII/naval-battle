@@ -53,10 +53,6 @@ public class StatisticsController {
                 e.printStackTrace();
             }
         }
-        else {
-            Alert alert = new Alert(Alert.AlertType.ERROR);
-            alert.setContentText("Connect online to see statistics");
-        }
     }
 
     public class Statistics {

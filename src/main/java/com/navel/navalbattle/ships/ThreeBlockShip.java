@@ -1,5 +1,8 @@
 package com.navel.navalbattle.ships;
 
+import javafx.scene.image.Image;
+import javafx.scene.paint.ImagePattern;
+
 public class ThreeBlockShip extends Ship {
     /**
      * Конструктор об'єкта ThreeBlocksShip, який ініціалізує основні параметри за допомгою батьківського конструктора
@@ -16,5 +19,7 @@ public class ThreeBlockShip extends Ship {
         offset = squareSize;
         rec.setWidth(squareSize * shipSize);
         rec.setHeight(squareSize);
+        shipImage = new Image(getClass().getResourceAsStream("/images/threeBlockShip.png"));
+        rec.setFill(new ImagePattern(shipImage));
     }
 }

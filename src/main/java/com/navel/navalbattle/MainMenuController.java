@@ -65,20 +65,28 @@ public class MainMenuController extends Controller implements WindowsManipulatio
 
     @FXML
     protected void onStatClick(ActionEvent e) throws IOException {
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("statistics.fxml"));
-        Scene scene = new Scene(loader.load());
+        if (DatabaseConnector.getConnection() != null) {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("statistics.fxml"));
+            Scene scene = new Scene(loader.load());
 
-        stage = (Stage) ((Node) e.getSource()).getScene().getWindow();
+            stage = (Stage) ((Node) e.getSource()).getScene().getWindow();
 
-        stage.setScene(scene);
-        stage.show();
+            stage.setScene(scene);
+            stage.show();
 
-        scene.setOnKeyPressed(event -> {
-            event.consume();
+            scene.setOnKeyPressed(event -> {
+                event.consume();
 
-            if (event.getCode() == KeyCode.ESCAPE) {
-                processReturnToMain(stage);
-            }
-        });
+                if (event.getCode() == KeyCode.ESCAPE) {
+                    processReturnToMain(stage);
+                }
+            });
+        }
+       else {
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.setContentText("Connect online to see statistics");
+
+            alert.showAndWait();
+        }
     }
 }

@@ -22,7 +22,7 @@ public class Main extends Application implements WindowsManipulations {
      * @throws IOException Помилка при читанні fxml файлу.
      */
     @Override
-    public void start(Stage stage) throws IOException, SQLException {
+    public void start(Stage stage) throws IOException {
         if(!DatabaseConnector.makeConnection()) {
             Alert alert = new Alert(Alert.AlertType.ERROR, "Can't connect to database", ButtonType.OK);
             alert.setContentText("You will continue without saving your statistics. If you want to save it, please, restart the game.");
@@ -32,6 +32,7 @@ public class Main extends Application implements WindowsManipulations {
             Scene scene = new Scene(loader.load());
 
             stage.setScene(scene);
+            stage.show();
 
             scene.setOnKeyPressed(event -> {
                 event.consume();
@@ -40,35 +41,32 @@ public class Main extends Application implements WindowsManipulations {
                     processExit(stage);
                 }
             });
-
-            return;
         }
+        else {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("authorization.fxml"));
+            Scene scene = new Scene(loader.load());
+            AuthorizationController controller = loader.getController();
 
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("authorization.fxml"));
-        Scene scene = new Scene(loader.load());
-        AuthorizationController controller = loader.getController();
+            stage.setTitle("Naval battle");
+            stage.setResizable(false);
 
-        stage.setTitle("Naval battle");
-        stage.setResizable(false);
+            stage.setScene(scene);
+            stage.show();
 
-        stage.setScene(scene);
-        stage.show();
+            stage.setOnCloseRequest(event -> {
+                        event.consume();
+                        processExit(stage);
+                    }
+            );
 
-        stage.setOnCloseRequest(event -> {
-            event.consume();
-            processExit(stage);
-            }
-        );
+            scene.setOnKeyPressed(event -> {
+                event.consume();
 
-        scene.setOnKeyPressed(event -> {
-            event.consume();
-
-            if (event.getCode() == KeyCode.ESCAPE) {
-                processExit(stage);
-            }
-        });
-
-
+                if (event.getCode() == KeyCode.ESCAPE) {
+                    processExit(stage);
+                }
+            });
+        }
     }
 
     /**
