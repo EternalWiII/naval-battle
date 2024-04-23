@@ -144,7 +144,7 @@ public class GameController extends Controller implements GridCalculations, Wind
             String query = "INSERT INTO events (player_id, event_type, player_hits, player_total_shots) VALUES (?, ?, ?, ?)";
             PreparedStatement statement = DatabaseConnector.getConnection().prepareStatement(query);
             statement.setInt(1, DatabaseConnector.getUserId());
-            statement.setObject(2, isPlayersWin ? "win" : "loss", java.sql.Types.OTHER);
+            statement.setObject(2, isPlayersWin ? "victory" : "loss", java.sql.Types.OTHER);
             statement.setInt(3, playerHits);
             statement.setInt(4, playerTotalShots);
             statement.executeUpdate();
@@ -252,14 +252,10 @@ public class GameController extends Controller implements GridCalculations, Wind
                     if(shipArr[i].getHit()) {
                         aliveShips.decrementAndGet();
                         if (shipArr[i].getRecOpacity() == 0) {
-                            System.out.println(shipArr[i].getRecOpacity());
                             shipArr[i].becomeVisible();
                         }
 
-                        System.out.println(isAlreadyHit);
                         markAreaAroundDeadShip(shipArr[i], fieldPane, isAlreadyHit);
-                        System.out.println(isAlreadyHit);
-                        System.out.println();
                     }
 
                     checkVictory();
