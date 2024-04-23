@@ -59,7 +59,6 @@ public class DatabaseConnector {
         }
     }
 
-
     public static void closeConnection() {
         try {
             connection.close();
