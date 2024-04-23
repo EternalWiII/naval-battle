@@ -12,8 +12,13 @@ public class ThreeBlockShip extends Ship {
      * @param x Координата X корабля.
      * @param y Координата Y корабля.
      */
-    public ThreeBlockShip(int shipID, int squareSize, int x, int y) {
+    public ThreeBlockShip(int shipID, int squareSize, int x, int y, boolean isVisible) {
         super(shipID, squareSize, x, y);
+        if (isVisible) {
+            rec.setOpacity(1);
+        } else {
+            rec.setOpacity(0);
+        }
         shipSize = 3;
         hp = shipSize;
         offset = squareSize;

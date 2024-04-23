@@ -12,8 +12,13 @@ public class FourBlockShip extends Ship {
      * @param x Координата X корабля.
      * @param y Координата Y корабля.
      */
-    public FourBlockShip(int shipID, int squareSize, int x, int y) {
+    public FourBlockShip(int shipID, int squareSize, int x, int y, boolean isVisible) {
         super(shipID, squareSize, x, y);
+        if (isVisible) {
+            rec.setOpacity(1);
+        } else {
+            rec.setOpacity(0);
+        }
         shipSize = 4;
         hp = shipSize;
         offset = ((double)squareSize * 3) / 2;

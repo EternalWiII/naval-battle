@@ -1,16 +1,46 @@
 package com.navel.navalbattle.database;
-import javafx.scene.chart.PieChart;
 
 import java.net.ConnectException;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
-import org.postgresql.util.PSQLException;
 
 public class DatabaseConnector {
-    private static final String URL = "jdbc:postgresql://localhost:5432/NavalBattle";
-    private static final String user = "postgres";
-    private static final String password = "12345";
+//    private static final String INSTANCE_CONNECTION_NAME =
+//            "autonomous-gist-420818:europe-west3:naval-battle";
+//    private static final String DB_USER = "player";
+//    private static final String DB_PASS = "12345";
+//    private static final String DB_NAME = "postgres";
+//    private static Connection connection;
+//    private static int userId;
+
+//    public static boolean makeConnection() {
+//        try {
+//            HikariConfig config = new HikariConfig();
+//            config.setJdbcUrl(String.format("jdbc:postgresql:///%s", DB_NAME));
+//            config.setUsername(DB_USER);
+//            config.setPassword(DB_PASS);
+//            config.addDataSourceProperty("socketFactory", "com.google.cloud.sql.postgres.SocketFactory");
+//            config.addDataSourceProperty("cloudSqlInstance", INSTANCE_CONNECTION_NAME);
+//
+//            connection = new HikariDataSource(config).getConnection();
+//
+//            return true;
+//        }
+//        catch (SQLException e) {
+//            Throwable cause = e.getCause();
+//            if (cause instanceof ConnectException) {
+//                System.out.println("Database is offline");
+//                return false;
+//            }
+//            e.printStackTrace();
+//            return false;
+//        }
+//    }
+
+    private static final String URL = "jdbc:postgresql://26.181.80.75:5432/navalbattle";
+    private static final String user = "navalbattle";
+    private static final String password = "navalbattle";
     private static Connection connection = null;
     private static int userId;
 
@@ -29,6 +59,7 @@ public class DatabaseConnector {
         }
     }
 
+
     public static void closeConnection() {
         try {
             connection.close();
@@ -38,7 +69,7 @@ public class DatabaseConnector {
     }
 
     public static Connection getConnection() {
-        return connection; //!!!!!!!!!!!!!!!!!!!!!!
+        return connection;
     }
 
     public static void setUserId(int userId) {

@@ -39,10 +39,7 @@ public class ShipsPositioningController extends Controller implements GridCalcul
     public void initialize() {
         shipArr = new Ship[10];
 
-        createShips(shipArr, fieldPane, squareSize, shipStartX, shipStartY);
-        for (Ship ship : shipArr) {
-            ship.becomeVisible();
-        }
+        createShips(shipArr, fieldPane, squareSize, shipStartX, shipStartY, true);
         addPositioningEvents(shipArr);
     }
 

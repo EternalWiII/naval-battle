@@ -100,14 +100,14 @@ public interface GridCalculations {
      * @param shipStartX Координата X від заданої fieldPane, на якій відбувається розташування.
      * @param shipStartY Координата Y від заданої fieldPane, на якій відбувається розташування.
      */
-    default void createShips (Ship[] shipArr, Pane fieldPane, int squareSize, int shipStartX, int shipStartY) {
+    default void createShips (Ship[] shipArr, Pane fieldPane, int squareSize, int shipStartX, int shipStartY, boolean makeVisible) {
         for (int i = 0; i < 10; i++) {
             shipArr[i] =
                     switch (i) {
-                        case 0 -> new FourBlockShip(i, squareSize, shipStartX, shipStartY);
-                        case 1, 2 -> new ThreeBlockShip(i, squareSize, shipStartX, shipStartY);
-                        case 3, 4, 5 -> new TwoBlockShip(i, squareSize, shipStartX, shipStartY);
-                        default -> new OneBlockShip(i, squareSize, shipStartX, shipStartY);
+                        case 0 -> new FourBlockShip(i, squareSize, shipStartX, shipStartY, makeVisible);
+                        case 1, 2 -> new ThreeBlockShip(i, squareSize, shipStartX, shipStartY, makeVisible);
+                        case 3, 4, 5 -> new TwoBlockShip(i, squareSize, shipStartX, shipStartY, makeVisible);
+                        default -> new OneBlockShip(i, squareSize, shipStartX, shipStartY, makeVisible);
                     };
 
             fieldPane.getChildren().add(shipArr[i].getRec());

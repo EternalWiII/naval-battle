@@ -9,6 +9,7 @@ import com.navel.navalbattle.records.GridPosition;
 import com.navel.navalbattle.records.ShipUsedArea;
 import com.navel.navalbattle.ships.Ship;
 import com.navel.navalbattle.records.spotStatus;
+import javafx.animation.FadeTransition;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -22,6 +23,7 @@ import javafx.scene.layout.Pane;
 import javafx.scene.paint.ImagePattern;
 import javafx.scene.shape.Rectangle;
 import javafx.stage.Stage;
+import javafx.util.Duration;
 
 import java.io.IOException;
 import java.sql.PreparedStatement;
@@ -66,7 +68,7 @@ public class GameController extends Controller implements GridCalculations, Wind
         }
 
         enemyShipArr = new Ship[10];
-        createShips(enemyShipArr, enemyFieldPane, squareSize, 600, 0);
+        createShips(enemyShipArr, enemyFieldPane, squareSize, 600, 0, true);
         autoplaceShips(enemyShipArr, squareSize, fieldSpots);
         drawShips(enemyShipArr);
 
@@ -249,9 +251,15 @@ public class GameController extends Controller implements GridCalculations, Wind
 
                     if(shipArr[i].getHit()) {
                         aliveShips.decrementAndGet();
-                        shipArr[i].draw();
-                        shipArr[i].becomeVisible();
+                        if (shipArr[i].getRecOpacity() == 0) {
+                            System.out.println(shipArr[i].getRecOpacity());
+                            shipArr[i].becomeVisible();
+                        }
+
+                        System.out.println(isAlreadyHit);
                         markAreaAroundDeadShip(shipArr[i], fieldPane, isAlreadyHit);
+                        System.out.println(isAlreadyHit);
+                        System.out.println();
                     }
 
                     checkVictory();
@@ -283,31 +291,12 @@ public class GameController extends Controller implements GridCalculations, Wind
             for (int g = deadArea.yMin(); g <= deadArea.yMax(); g++) {
 
                 if (j >= 0 && j <= 9 && g >= 0 && g <= 9) {
-                    spotStatus status = isAlreadyHit.get(j).get(g);
-                    int finalG = g;
-                    int finalJ = j;
-                    Platform.runLater(() -> {
-                        if (status == spotStatus.UNKNOWN) {
-                            Rectangle rec = new Rectangle();
-                            rec.setHeight(squareSize);
-                            rec.setWidth(squareSize);
-                            Image image = new Image(getClass().getResourceAsStream("/images/miss.png"));
-                            rec.setFill(new ImagePattern(image));
-                            rec.setTranslateX(finalJ * squareSize);
-                            rec.setTranslateY(finalG * squareSize);
-
-                            fieldPane.getChildren().add(rec);
-                        }
-                    });
-
-                    isAlreadyHit.get(j).set(g, spotStatus.EMPTY);
+                    if (isAlreadyHit.get(j).get(g) == spotStatus.UNKNOWN) {
+                        markMiss(new GridPosition(j, g), fieldPane, isAlreadyHit);
+                    }
                 }
             }
         }
-
-        Platform.runLater(() -> {
-            ship.becomeVisible();
-        });
     }
 
     /**
@@ -325,20 +314,10 @@ public class GameController extends Controller implements GridCalculations, Wind
             rec.setFill(new ImagePattern(image));
             rec.setOpacity(0);
 
-            Thread missAnimation = new Thread() {
-                @Override
-                public void run() {
-                    for (int i = 0; i < 10; i++) {
-                        rec.setOpacity(i * 0.1);
-                        try {
-                            Thread.sleep(50);
-                        } catch (InterruptedException e) {
-                            e.printStackTrace();
-                        }
-                    }
-                }
-            };
-            missAnimation.start();
+            FadeTransition ft = new FadeTransition(Duration.millis(500), rec);
+            ft.setFromValue(0.0);
+            ft.setToValue(1.0);
+            ft.play();
 
             fieldPane.getChildren().add(rec);
 
@@ -362,20 +341,10 @@ public class GameController extends Controller implements GridCalculations, Wind
             rec.setFill(new ImagePattern(image));
             rec.setOpacity(0);
 
-            Thread hitAnimation = new Thread() {
-                @Override
-                public void run() {
-                    for (int i = 0; i < 10; i++) {
-                        rec.setOpacity(i * 0.1);
-                        try {
-                            Thread.sleep(50);
-                        } catch (InterruptedException e) {
-                            e.printStackTrace();
-                        }
-                    }
-                }
-            };
-            hitAnimation.start();
+            FadeTransition ft = new FadeTransition(Duration.millis(500), rec);
+            ft.setFromValue(0.0);
+            ft.setToValue(1.0);
+            ft.play();
 
             fieldPane.getChildren().add(rec);
 

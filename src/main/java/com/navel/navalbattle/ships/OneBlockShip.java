@@ -13,8 +13,13 @@ public class OneBlockShip extends Ship {
      * @param x Координата X корабля.
      * @param y Координата Y корабля.
      */
-    public OneBlockShip(int shipID, int squareSize, int x, int y) {
+    public OneBlockShip(int shipID, int squareSize, int x, int y, boolean isVisible) {
         super(shipID, squareSize, x, y);
+        if (isVisible) {
+            rec.setOpacity(1);
+        } else {
+            rec.setOpacity(0);
+        }
         shipSize = 1;
         hp = shipSize;
         offset = 0;

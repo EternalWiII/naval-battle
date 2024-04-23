@@ -1,11 +1,13 @@
 package com.navel.navalbattle.ships;
 
 import com.navel.navalbattle.records.ShipUsedArea;
+import javafx.animation.FadeTransition;
 import javafx.scene.image.Image;
 import javafx.scene.paint.Color;
 
 import javafx.scene.paint.ImagePattern;
 import javafx.scene.shape.Rectangle;
+import javafx.util.Duration;
 
 public class Ship {
     private static int numberOfShips = 0;
@@ -33,7 +35,6 @@ public class Ship {
     public Ship(int shipID, int squareSize, int x, int y) {
         this.squareSize = squareSize;
         rec = new Rectangle();
-        rec.setOpacity(0);
         this.x = x;
         this.y = y;
         this.shipID = shipID;
@@ -257,19 +258,13 @@ public class Ship {
      * Візуально змінює корабель до знищеного стану.
      */
     public void becomeVisible() {
-        Thread becomeVisibleAnimation = new Thread() {
-            @Override
-            public void run() {
-                for (int i = 0; i < 10; i++) {
-                    rec.setOpacity(i * 0.1);
-                    try {
-                        Thread.sleep(50);
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
-                }
-            }
-        };
-        becomeVisibleAnimation.start();
+        FadeTransition ft = new FadeTransition(Duration.millis(500), rec);
+        ft.setFromValue(0.0);
+        ft.setToValue(1.0);
+        ft.play();
+    }
+
+    public double getRecOpacity() {
+        return rec.getOpacity();
     }
 }
