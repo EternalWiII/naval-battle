@@ -31,6 +31,9 @@ public class Main extends Application implements WindowsManipulations {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("main_menu.fxml"));
             Scene scene = new Scene(loader.load());
 
+            stage.setMinHeight(300);
+            stage.setMinWidth(300);
+
             stage.setScene(scene);
             stage.show();
 
@@ -48,7 +51,7 @@ public class Main extends Application implements WindowsManipulations {
             AuthorizationController controller = loader.getController();
 
             stage.setTitle("Naval battle");
-            stage.setResizable(false);
+//            stage.setResizable(false);
 
             stage.setScene(scene);
             stage.show();

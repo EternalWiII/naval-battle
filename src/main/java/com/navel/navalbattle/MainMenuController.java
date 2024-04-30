@@ -11,8 +11,7 @@ import javafx.scene.Scene;
 import javafx.scene.chart.PieChart;
 import javafx.scene.control.*;
 import javafx.scene.input.KeyCode;
-import javafx.scene.layout.AnchorPane;
-import javafx.scene.layout.GridPane;
+import javafx.scene.layout.*;
 import javafx.stage.Stage;
 
 import java.io.IOException;
@@ -22,8 +21,20 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 public class MainMenuController extends Controller implements WindowsManipulations {
+    @FXML
+    private Pane scenePane;
+    @FXML
+    private VBox vBox;
     private Stage stage;
     private Connection connection;
+
+    @FXML
+    private void initialize() {
+        vBox.prefWidthProperty().bind(scenePane.widthProperty().subtract(200));
+        vBox.prefHeightProperty().bind(scenePane.heightProperty().subtract(200));
+
+        vBox.spacingProperty().bind(scenePane.heightProperty().divide(5));
+    }
 
     /**
      * Завантажує наступну сцену з розташуванням кораблів та події для неї.
@@ -38,8 +49,13 @@ public class MainMenuController extends Controller implements WindowsManipulatio
 
         stage = (Stage) ((Node) e.getSource()).getScene().getWindow();;
 
+
+
         stage.setScene(scene);
         stage.show();
+
+        stage.setMinWidth(stage.getWidth() - scene.getWidth() + 640);
+        stage.setMinHeight(stage.getHeight() - scene.getHeight() + 540);
 
         scene.setOnKeyPressed(event -> {
             event.consume();
