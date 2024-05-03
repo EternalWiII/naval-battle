@@ -3,9 +3,7 @@ package com.navel.navalbattle.ships;
 import com.navel.navalbattle.records.ShipUsedArea;
 import javafx.animation.FadeTransition;
 import javafx.scene.image.Image;
-import javafx.scene.paint.Color;
 
-import javafx.scene.paint.ImagePattern;
 import javafx.scene.shape.Rectangle;
 import javafx.util.Duration;
 
@@ -21,7 +19,8 @@ public class Ship {
     protected double homeX;
     protected double homeY;
     protected boolean homeIsVertical;
-    protected double offset = 0;
+    protected double rotationOffset = 0;
+    protected double resizingOffset = 0;
     protected int hp;
     protected Image shipImage;
 
@@ -32,12 +31,13 @@ public class Ship {
      * @param x Координата X корабля.
      * @param y Координата Y корабля.
      */
-    public Ship(int shipID, int squareSize, int x, int y) {
+    public Ship(int shipID, int squareSize, int x, int y, double offset) {
         this.squareSize = squareSize;
         rec = new Rectangle();
         this.x = x;
         this.y = y;
         this.shipID = shipID;
+        this.resizingOffset = offset;
 
         numberOfShips++;
     }
@@ -142,8 +142,8 @@ public class Ship {
      * Гетер для поля offset.
      * @return поле offset.
      */
-    public double getOffset() {
-        return offset;
+    public double getRotationOffset() {
+        return rotationOffset;
     }
 
     /**
@@ -178,11 +178,19 @@ public class Ship {
         this.squareSize = squareSize;
     }
 
+    public double getResizingOffset() {
+        return resizingOffset;
+    }
+
+    public void setResizingOffset(double resizingOffset) {
+        this.resizingOffset = resizingOffset;
+    }
+
     /**
      * Відмальовує пямокутник корябля на поточних координатах.
      */
     public void draw() {
-        rec.setTranslateX(x);
+        rec.setTranslateX(x - resizingOffset);
         rec.setTranslateY(y);
     }
 
@@ -209,19 +217,19 @@ public class Ship {
     public ShipUsedArea getUsedArea() {
         int[] area = new int[4];
         if (isVertical) {
-            if (((int)(x) + (int)offset ) / squareSize >= 10) {
-                System.out.println(((int)(x) + (int)offset / squareSize));
-                area[0] = ((int)(x) + (int)offset) / squareSize;
+            if (((int)(x) + (int) rotationOffset) / squareSize >= 10) {
+                System.out.println(((int)(x) + (int) rotationOffset / squareSize));
+                area[0] = ((int)(x) + (int) rotationOffset) / squareSize;
                 area[1] = area[0];
 
-                area[2] = ((int)(y) - (int)offset) / squareSize;
+                area[2] = ((int)(y) - (int) rotationOffset) / squareSize;
                 area[3] = area[2] + shipSize - 1;
             }
             else {
-                area[0] = ((int)(x) + (int)offset) / squareSize - 1;
+                area[0] = ((int)(x) + (int) rotationOffset) / squareSize - 1;
                 area[1] = area[0] + 2;
 
-                area[2] = ((int)(y) - (int)offset) / squareSize - 1;
+                area[2] = ((int)(y) - (int) rotationOffset) / squareSize - 1;
                 area[3] = area[2] + shipSize + 1;
             }
         }

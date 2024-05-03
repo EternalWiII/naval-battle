@@ -4,28 +4,34 @@ import com.navel.navalbattle.interfaces.GridCalculations;
 import com.navel.navalbattle.interfaces.WindowsManipulations;
 import com.navel.navalbattle.ships.*;
 import com.navel.navalbattle.records.GridPosition;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
-import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
-import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 import javafx.scene.input.KeyCode;
-import javafx.scene.input.KeyEvent;
 
 import java.io.IOException;
 
 public class ShipsPositioningController extends Controller implements GridCalculations, WindowsManipulations {
     private Stage stage;
     @FXML
-    private Pane fieldPane;
+    private Pane borderPane;
+    @FXML
+    private Pane playerGridPane;
+    @FXML
+    private Pane playerPane;
+    @FXML
+    private Pane hangarGridPane;
+    @FXML
+    private Pane hangarPane;
+
     private int shipStartX = fieldSize + squareSize;
     private int shipStartY = 0;
     private Ship[] shipArr;
@@ -37,10 +43,25 @@ public class ShipsPositioningController extends Controller implements GridCalcul
      */
     @FXML
     public void initialize() {
+        playerGridPane.layoutXProperty().bind(playerPane.widthProperty().subtract(fieldSize).divide(2));
+        playerGridPane.layoutYProperty().bind(playerPane.heightProperty().subtract(fieldSize).divide(2));
+
+        hangarGridPane.layoutXProperty().bind(hangarPane.widthProperty().subtract(4 * squareSize).divide(2));
+        hangarGridPane.layoutYProperty().bind(hangarPane.heightProperty().subtract(fieldSize).divide(2));
+
         shipArr = new Ship[10];
 
-        createShips(shipArr, fieldPane, squareSize, shipStartX, shipStartY, true);
-        addPositioningEvents(shipArr);
+        ChangeListener<Number> widthListener = new ChangeListener<>() {
+            @Override
+            public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
+                createShips(shipArr, hangarGridPane, squareSize, shipStartX, shipStartY, true, newValue.doubleValue());
+                addPositioningEvents(shipArr);
+
+                playerPane.widthProperty().removeListener(this);
+            }
+        };
+
+        playerPane.widthProperty().addListener(widthListener);
     }
 
     /**
@@ -65,6 +86,7 @@ public class ShipsPositioningController extends Controller implements GridCalcul
         s.setHomeY(s.getY());
         s.setHomeIsVertical(s.isVertical());
         draggedShip = s;
+        s.getRec().getParent().toFront();
     }
 
     /**
@@ -77,8 +99,8 @@ public class ShipsPositioningController extends Controller implements GridCalcul
 
         s.getRec().toFront();
 
-        s.setX((event.getSceneX()) - (double)(squareSize * s.getShipSize()) / 2 - 20);
-        s.setY((event.getSceneY()) - (double)(squareSize) / 2 - 70);
+        s.setX((event.getSceneX()) - (double)(squareSize * s.getShipSize()) / 2); // - 20 - playerGridPane.getLayoutX() + 20
+        s.setY((event.getSceneY()) - (double)(squareSize) / 2 - 70 - playerGridPane.getLayoutY() + 20); // - playerGridPane.getLayoutY() + 20
 
         s.draw();
     }
@@ -90,18 +112,34 @@ public class ShipsPositioningController extends Controller implements GridCalcul
      */
     private void recReleased(MouseEvent event, Ship s) {
         isDragged = false;
+        boolean isInPlayerGridPane = playerGridPane.getChildren().contains(s.getRec());
+
 
         GridPosition position = getPosition(s, squareSize);
+        GridPosition oldPosition = getPosition(s.getHomeX(), s.getHomeY(), squareSize);
 
         if (canPlace(s, shipArr, position)) {
+
+            System.out.println("Can place");
+
+            System.out.println("Old position: " + oldPosition.x() + " " + oldPosition.y());
+            System.out.println("New position: " + position.x() + " " + position.y());
+
+            if (oldPosition.x() != position.x() && ((oldPosition.x() < 10 && position.x() > 10) || (oldPosition.x() > 10 && position.x() < 10))) {
+                flipPane(s);
+                System.out.println("Flipped");
+            }
+
             if (s.isVertical()) {
-                s.setX(squareSize * position.x() - s.getOffset());
-                s.setY(squareSize * position.y() + s.getOffset());
+                s.setX(squareSize * position.x() - s.getRotationOffset());
+                s.setY(squareSize * position.y() + s.getRotationOffset());
             }
             else {
                 s.setX(squareSize * position.x());
                 s.setY(squareSize * position.y());
             }
+            System.out.println("X: " + (s.getX() - s.getResizingOffset()) + " Y: " + s.getY());
+            System.out.println(s.getResizingOffset());
             s.draw();
         }
         else {
@@ -111,6 +149,19 @@ public class ShipsPositioningController extends Controller implements GridCalcul
                 s.flipIsVertical();
             }
             s.draw();
+        }
+    }
+
+    private void flipPane(Ship s) {
+        if (playerGridPane.getChildren().contains(s.getRec())) {
+            s.setResizingOffset(playerPane.getWidth());
+            playerGridPane.getChildren().remove(s.getRec());
+            hangarGridPane.getChildren().add(s.getRec());
+        }
+        else {
+            s.setResizingOffset(0);
+            hangarGridPane.getChildren().remove(s.getRec());
+            playerGridPane.getChildren().add(s.getRec());
         }
     }
 
@@ -164,7 +215,7 @@ public class ShipsPositioningController extends Controller implements GridCalcul
     protected boolean checkShipsPlaced() {
         for (int i = 0; i < 10; i++) {
             if (shipArr[i].isVertical()) {
-                if (shipArr[i].getX() + shipArr[i].getOffset() >= 400) {
+                if (shipArr[i].getX() + shipArr[i].getRotationOffset() >= 400) {
                     return false;
                 }
             }

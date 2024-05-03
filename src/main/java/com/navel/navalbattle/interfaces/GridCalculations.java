@@ -19,7 +19,7 @@ public interface GridCalculations {
         int gridy;
 
         if (s.isVertical()) {
-            gridx = ((int) s.getX() + (int) s.getOffset() + 20) / squareSize;
+            gridx = ((int) s.getX() + (int) s.getRotationOffset() + 20) / squareSize;
 
             if (gridx < 0) {
                 gridx = 0;
@@ -31,7 +31,7 @@ public interface GridCalculations {
                 gridx = 11;
             }
 
-            gridy = ((int) s.getY() - (int) s.getOffset() + 20) / squareSize;
+            gridy = ((int) s.getY() - (int) s.getRotationOffset() + 20) / squareSize;
 
             if (gridy < 0) {
                 gridy = 0;
@@ -95,22 +95,23 @@ public interface GridCalculations {
     /**
      * createShips приєднує прямокутники кораблів до потрібної панелі та розташовує їх один під одним на певних координатах.
      * @param shipArr Масив кораблей для яких виконується маніпуляції.
-     * @param fieldPane Панель, до якої потрібно приєднати прямокутники кораблі.
+     * @param pane Панель, до якої потрібно приєднати прямокутники кораблі.
      * @param squareSize Довжина однієї сторони клітини в пікселях.
      * @param shipStartX Координата X від заданої fieldPane, на якій відбувається розташування.
      * @param shipStartY Координата Y від заданої fieldPane, на якій відбувається розташування.
      */
-    default void createShips (Ship[] shipArr, Pane fieldPane, int squareSize, int shipStartX, int shipStartY, boolean makeVisible) {
+    default void createShips (Ship[] shipArr, Pane pane, int squareSize, int shipStartX, int shipStartY, boolean makeVisible, double offset) {
         for (int i = 0; i < 10; i++) {
             shipArr[i] =
                     switch (i) {
-                        case 0 -> new FourBlockShip(i, squareSize, shipStartX, shipStartY, makeVisible);
-                        case 1, 2 -> new ThreeBlockShip(i, squareSize, shipStartX, shipStartY, makeVisible);
-                        case 3, 4, 5 -> new TwoBlockShip(i, squareSize, shipStartX, shipStartY, makeVisible);
-                        default -> new OneBlockShip(i, squareSize, shipStartX, shipStartY, makeVisible);
+                        case 0 -> new FourBlockShip(i, squareSize, shipStartX, shipStartY, offset, makeVisible);
+                        case 1, 2 -> new ThreeBlockShip(i, squareSize, shipStartX, shipStartY, offset, makeVisible);
+                        case 3, 4, 5 -> new TwoBlockShip(i, squareSize, shipStartX, shipStartY, offset, makeVisible);
+                        default -> new OneBlockShip(i, squareSize, shipStartX, shipStartY, offset, makeVisible);
                     };
 
-            fieldPane.getChildren().add(shipArr[i].getRec());
+
+            pane.getChildren().add(shipArr[i].getRec());
 
             shipArr[i].draw();
 
@@ -173,8 +174,8 @@ public interface GridCalculations {
                 }
 
                 if (shipArr[i].isVertical()) {
-                    shipArr[i].setX(gridx * squareSize - shipArr[i].getOffset());
-                    shipArr[i].setY(gridy * squareSize + shipArr[i].getOffset());
+                    shipArr[i].setX(gridx * squareSize - shipArr[i].getRotationOffset());
+                    shipArr[i].setY(gridy * squareSize + shipArr[i].getRotationOffset());
                 }
                 else {
                     shipArr[i].setX(gridx * squareSize);
@@ -184,8 +185,8 @@ public interface GridCalculations {
                 if(canPlace(shipArr[i], shipArr, getPosition(shipArr[i], squareSize))) {
                     GridPosition shipPos = getPosition(shipArr[i], squareSize);
                     if (shipArr[i].isVertical()) {
-                        shipArr[i].setX(shipPos.x() * squareSize - shipArr[i].getOffset());
-                        shipArr[i].setY(shipPos.y() * squareSize + shipArr[i].getOffset());
+                        shipArr[i].setX(shipPos.x() * squareSize - shipArr[i].getRotationOffset());
+                        shipArr[i].setY(shipPos.y() * squareSize + shipArr[i].getRotationOffset());
                     }
                     else {
                         shipArr[i].setX(shipPos.x() * squareSize);
