@@ -1,0 +1,18 @@
+.main_menu_btn {
+    -fx-background-color: cyan;
+    -fx-button-radius: 0, 0, 30, 30;
+    -fx-alignment: center;
+}
+
+#vBox {
+    -fx-alignment: center;
+    -fx-spacing: 50;
+}
+
+#imageView {
+    -fx-alignment: center;
+}
+
+#scenePane {
+    -fx-alignment: center;
+}

@@ -11,6 +11,9 @@ import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.TextField;
 import javafx.scene.input.KeyCode;
+import javafx.scene.layout.Pane;
+import javafx.scene.layout.Priority;
+import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
 import java.io.IOException;
@@ -20,7 +23,6 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 public class AuthorizationController extends Controller implements WindowsManipulations {
-    private Connection connection;
     @FXML
     private TextField usernameField;
     @FXML
@@ -49,7 +51,6 @@ public class AuthorizationController extends Controller implements WindowsManipu
             Stage stage = (Stage) usernameField.getScene().getWindow();
 
             stage.setScene(scene);
-
             scene.setOnKeyPressed(event -> {
                 event.consume();
 

@@ -13,8 +13,8 @@ public class OneBlockShip extends Ship {
      * @param x Координата X корабля.
      * @param y Координата Y корабля.
      */
-    public OneBlockShip(int shipID, int squareSize, int x, int y, boolean isVisible) {
-        super(shipID, squareSize, x, y);
+    public OneBlockShip(int shipID, int squareSize, int x, int y, double offset, boolean isVisible) {
+        super(shipID, squareSize, x, y, offset);
         if (isVisible) {
             rec.setOpacity(1);
         } else {
@@ -22,7 +22,7 @@ public class OneBlockShip extends Ship {
         }
         shipSize = 1;
         hp = shipSize;
-        offset = 0;
+        rotationOffset = 0;
         rec.setWidth(squareSize * shipSize);
         rec.setHeight(squareSize);
         shipImage = new Image(getClass().getResourceAsStream("/images/oneBlockShip.png"));
